@@ -4,5 +4,5 @@ install:
   - nuget restore FxCommonStandard.sln
   - nuget install NUnit.Runners -Version 3.7.0 -OutputDirectory testrunner
 script:
-  - xbuild /p:Configuration=Release FxCommonStandard.sln
-  - mono ./testrunner/NUnit.ConsoleRunner.3.7.0/tools/nunit3-console.exe ./FxCommonTest/bin/Release/FxCommonStandard.dll
+  - dotnet restore
+  - dotnet build
