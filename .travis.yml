@@ -2,7 +2,7 @@ language: csharp
 solution: FxCommon.sln
 install:
   - nuget restore FxCommonStandard.sln
-  - nuget install NUnit.Runners -Version 3.9.0 -OutputDirectory testrunner
+  - nuget install NUnit.Runners -Version 3.7.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release FxCommon.Net35.sln
-  - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe ./FxCommonTest/bin/Release/FxCommonStandard.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.7.0/tools/nunit3-console.exe ./FxCommonTest/bin/Release/FxCommonStandard.dll
