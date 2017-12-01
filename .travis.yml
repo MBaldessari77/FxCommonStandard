@@ -1,5 +1,6 @@
 language: csharp
 solution: FxCommon.sln
+dotnet: 1.1.5
 install:
   - nuget restore FxCommonStandard.sln
   - nuget install NUnit.Runners -Version 3.7.0 -OutputDirectory testrunner
