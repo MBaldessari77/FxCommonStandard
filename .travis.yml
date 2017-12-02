@@ -6,4 +6,4 @@ install:
 script:
   - dotnet restore
   - dotnet build
-  - dotnet test /home/travis/build/waldrix/FxCommonStandard/FxCommonStandard.Tests/bin/Debug/netcoreapp1.1/FxCommonStandard.Tests.dll
+  - dotnet test
