@@ -3,7 +3,7 @@ solution: FxCommon.sln
 dotnet: 1.1.5
 install:
   - nuget restore FxCommonStandard.sln
-  - nuget install NUnit.Runners -Version 3.7.0 -OutputDirectory testrunner
 script:
   - dotnet restore
   - dotnet build
+  - dotnet test FxCommonStandard.Tests
