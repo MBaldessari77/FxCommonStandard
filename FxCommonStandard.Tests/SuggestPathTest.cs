@@ -4,37 +4,36 @@ using System.Linq;
 using FxCommon.Contracts;
 using FxCommon.Services;
 using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FxCommonStandard.Tests
 {
-	[TestFixture]
 	public class SuggestPathTest
 	{
-		[Test]
+		[Fact]
 		public void WhenNoPathPassedTheResultIsNull()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(null), Is.Null);
-			Assert.That(utils.SuggestPath(string.Empty), Is.Null);
-			Assert.That(utils.SuggestPath(" "), Is.Null);
+			Assert.Null(utils.SuggestPath(null));
+			Assert.Null(utils.SuggestPath(string.Empty));
+			Assert.Null(utils.SuggestPath(" "));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenPathIsNotValidoOrNotExistsTheResultIsNull()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"z:\" + Guid.NewGuid()), Is.Null);
-			Assert.That(utils.SuggestPath("$\"!£%"), Is.Null);
+			Assert.Null(utils.SuggestPath(@"z:\" + Guid.NewGuid()));
+			Assert.Null(utils.SuggestPath("$\"!£%"));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenPathIsPassedWithoutEndingBackslashAndTheDirectoryDoNotExistsTheSameDirectoryIsSuggested()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
@@ -44,13 +43,13 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"c:\somedir"), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@"C:\SOMEDIR"), Is.EqualTo(@"C:\SOMEDIR"));
-			Assert.That(utils.SuggestPath(@" c:\somedir "), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@" C:\SOMEDIR "), Is.EqualTo(@"C:\SOMEDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\somedir"));
+			Assert.Equal(@"C:\SOMEDIR", utils.SuggestPath(@"C:\SOMEDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\somedir "));
+			Assert.Equal(@"C:\SOMEDIR", utils.SuggestPath(@" C:\SOMEDIR "));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenPathIsPassedWithEndingBackslashAndNoSubDirectoriesExistsTheSameDirectoryIsSuggested()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
@@ -63,13 +62,13 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"c:\somedir\"), Is.EqualTo(@"c:\somedir\"));
-			Assert.That(utils.SuggestPath(@"C:\SOMEDIR\"), Is.EqualTo(@"C:\SOMEDIR\"));
-			Assert.That(utils.SuggestPath(@" c:\somedir\ "), Is.EqualTo(@"c:\somedir\"));
-			Assert.That(utils.SuggestPath(@" C:\SOMEDIR\ "), Is.EqualTo(@"C:\SOMEDIR\"));
+			Assert.Equal(@"c:\somedir\", utils.SuggestPath(@"c:\somedir\"));
+			Assert.Equal(@"C:\SOMEDIR\", utils.SuggestPath(@"C:\SOMEDIR\"));
+			Assert.Equal(@"c:\somedir\", utils.SuggestPath(@" c:\somedir\ "));
+			Assert.Equal(@"C:\SOMEDIR\", utils.SuggestPath(@" C:\SOMEDIR\ "));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenPathIsPassedWithEndingBackslashAndSubDirectoriesExistsReturnFirstSubdirectories()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
@@ -82,13 +81,13 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"c:\somedir\"), Is.EqualTo(@"c:\somedir\subdira"));
-			Assert.That(utils.SuggestPath(@"C:\SOMEDIR\"), Is.EqualTo(@"c:\somedir\subdira"));
-			Assert.That(utils.SuggestPath(@" c:\somedir\ "), Is.EqualTo(@"c:\somedir\subdira"));
-			Assert.That(utils.SuggestPath(@" C:\SOMEDIR\ "), Is.EqualTo(@"c:\somedir\subdira"));
+			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@"c:\somedir\"));
+			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@"C:\SOMEDIR\"));
+			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@" c:\somedir\ "));
+			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@" C:\SOMEDIR\ "));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenPathIsPassedWithNoEndingBackslashAndIsOnlySubDirectoriesIsReturnedSamePath()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
@@ -101,13 +100,13 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"c:\somedira"), Is.EqualTo(@"c:\somedira"));
-			Assert.That(utils.SuggestPath(@"C:\SOMEDIRA"), Is.EqualTo(@"c:\somedira"));
-			Assert.That(utils.SuggestPath(@" c:\somedira "), Is.EqualTo(@"c:\somedira"));
-			Assert.That(utils.SuggestPath(@" C:\SOMEDIRA "), Is.EqualTo(@"c:\somedira"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"c:\somedira"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"C:\SOMEDIRA"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" c:\somedira "));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" C:\SOMEDIRA "));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenPathIsPassedWithNoEndingBackslashAndExistsIsReturnedNextPath()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
@@ -123,17 +122,17 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"c:\somedira"), Is.EqualTo(@"c:\somedirb"));
-			Assert.That(utils.SuggestPath(@"C:\SOMEDIRA"), Is.EqualTo(@"c:\somedirb"));
-			Assert.That(utils.SuggestPath(@"c:\somedirb"), Is.EqualTo(@"c:\somedira"));
-			Assert.That(utils.SuggestPath(@"C:\SOMEDIRB"), Is.EqualTo(@"c:\somedira"));
-			Assert.That(utils.SuggestPath(@" c:\somedira "), Is.EqualTo(@"c:\somedirb"));
-			Assert.That(utils.SuggestPath(@" C:\SOMEDIRA "), Is.EqualTo(@"c:\somedirb"));
-			Assert.That(utils.SuggestPath(@" c:\somedirb "), Is.EqualTo(@"c:\somedira"));
-			Assert.That(utils.SuggestPath(@" C:\SOMEDIRB "), Is.EqualTo(@"c:\somedira"));
+			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@"c:\somedira"));
+			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@"C:\SOMEDIRA"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"c:\somedirb"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"C:\SOMEDIRB"));
+			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@" c:\somedira "));
+			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@" C:\SOMEDIRA "));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" c:\somedirb "));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" C:\SOMEDIRB "));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenPathIsPassedWithNoEndingBackslashIsSearchedFirstDirectoryThatStartsWithLastToken()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
@@ -146,21 +145,21 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"c:\some"), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@"c:\somedir"), Is.EqualTo(@"c:\otherdir"));
-			Assert.That(utils.SuggestPath(@"c:\otherdir"), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@"C:\SOME"), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@"C:\SOMEDIR"), Is.EqualTo(@"c:\otherdir"));
-			Assert.That(utils.SuggestPath(@"C:\OTHERDIR"), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@" c:\some "), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@" c:\somedir "), Is.EqualTo(@"c:\otherdir"));
-			Assert.That(utils.SuggestPath(@" c:\otherdir "), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@" C:\SOME "), Is.EqualTo(@"c:\somedir"));
-			Assert.That(utils.SuggestPath(@" C:\SOMEDIR "), Is.EqualTo(@"c:\otherdir"));
-			Assert.That(utils.SuggestPath(@" C:\OTHERDIR "), Is.EqualTo(@"c:\somedir"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\some"));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"c:\somedir"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\otherdir"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\SOME"));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"C:\SOMEDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\OTHERDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\some "));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" c:\somedir "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\otherdir "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\SOME "));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" C:\SOMEDIR "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\OTHERDIR "));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenPathIsAnIncompletedNetworkPathIsReturnedSamePath()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
@@ -182,12 +181,12 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"\\networkpath"), Is.EqualTo(@"\\networkpath"));
-			Assert.That(utils.SuggestPath(@"\\networkpath\"), Is.EqualTo(@"\\networkpath\"));
-			Assert.That(utils.SuggestPath(@"\\networkpath\share"), Is.EqualTo(@"\\networkpath\share"));
+			Assert.Equal(@"\\networkpath", utils.SuggestPath(@"\\networkpath"));
+			Assert.Equal(@"\\networkpath\", utils.SuggestPath(@"\\networkpath\"));
+			Assert.Equal(@"\\networkpath\share", utils.SuggestPath(@"\\networkpath\share"));
 		}
 
-		[Test]
+		[Fact]
 		public void WhenNetworkPathDoesntExistsIsReturnedNull()
 		{
 			var fileSystemService = new Mock<IFileSystemService> { DefaultValue = DefaultValue.Mock };
@@ -197,9 +196,9 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.That(utils.SuggestPath(@"\\invalid\share\"), Is.Null);
-			Assert.That(utils.SuggestPath(@"\\invalid\share\folder"), Is.Null);
-			Assert.That(utils.SuggestPath(@"\\invalid\share\folder\subfolder"), Is.Null);
+			Assert.Null(utils.SuggestPath(@"\\invalid\share\"));
+			Assert.Null(utils.SuggestPath(@"\\invalid\share\folder"));
+			Assert.Null(utils.SuggestPath(@"\\invalid\share\folder\subfolder"));
 		}
 	}
 }

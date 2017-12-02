@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using FxCommon.Services;
-using NUnit.Framework;
+using Xunit;
 
 namespace FxCommonStandard.Tests
 {
-	[TestFixture]
 	public class Aes256ChiperTest
 	{
-		[Test]
+		[Fact]
 		public void EveryCryptographicResultsIsDifferentEvenInCaseOfSamePassawordAndValue()
 		{
 			const string yes = "YES";
@@ -21,12 +20,12 @@ namespace FxCommonStandard.Tests
 			string[] encriptedValues = values.Select(v => chiper.EncriptBase64(pwd1, pwd2, v)).ToArray();
 			string[] decriptedValues = encriptedValues.Select(v => chiper.DecriptBase64(pwd1, pwd2, v)).ToArray();
 
-			Assert.IsEmpty(encriptedValues.Intersect(values));
-			Assert.IsTrue(decriptedValues.SequenceEqual(values));
-			Assert.That(encriptedValues[0], Is.Not.EqualTo(encriptedValues[1]));
-			Assert.That(encriptedValues[0], Is.Not.EqualTo(encriptedValues[2]));
-			Assert.That(encriptedValues[0], Is.Not.EqualTo(encriptedValues[4]));
-			Assert.That(encriptedValues[2], Is.Not.EqualTo(encriptedValues[3]));
+			Assert.Empty(encriptedValues.Intersect(values));
+			Assert.True(decriptedValues.SequenceEqual(values));
+			Assert.NotEqual(encriptedValues[0], encriptedValues[1]);
+			Assert.NotEqual(encriptedValues[0], encriptedValues[2]);
+			Assert.NotEqual(encriptedValues[0], encriptedValues[4]);
+			Assert.NotEqual(encriptedValues[2], encriptedValues[3]);
 
 #if DEBUG
 			for (int i = 0; i < values.Length; i++)

@@ -1,33 +1,33 @@
 using FxCommon.Extensions;
-using NUnit.Framework;
+using Xunit;
 
 namespace FxCommonStandard.Tests
 {
-	[TestFixture]
 	public class ExpressionExtensionsTest
 	{
 		class MemberSourceStub
 		{
+			// ReSharper disable once UnusedAutoPropertyAccessor.Local
 			public string Property { get; set; }
 #pragma warning disable 649
 			public int Field;
 #pragma warning restore 649
 		}
 
-		[Test]
+		[Fact]
 		public void GetMemberNameFromExpressionsSucceed()
 		{
-			Assert.AreEqual("Property", ExpressionExtensions.GetMemberName((MemberSourceStub t) => t.Property));
-			Assert.AreEqual("Field", ExpressionExtensions.GetMemberName((MemberSourceStub t) => t.Field));
+			Assert.Equal("Property", ExpressionExtensions.GetMemberName((MemberSourceStub t) => t.Property));
+			Assert.Equal("Field", ExpressionExtensions.GetMemberName((MemberSourceStub t) => t.Field));
 		}
 
-		[Test]
+		[Fact]
 		public void GetMemberNameFromExpressionsViaObjectSucceed()
 		{
 			MemberSourceStub t = new MemberSourceStub();
 
-			Assert.AreEqual("Property", t.GetMemberName(e => e.Property));
-			Assert.AreEqual("Field", t.GetMemberName(e => e.Field));
+			Assert.Equal("Property", t.GetMemberName(e => e.Property));
+			Assert.Equal("Field", t.GetMemberName(e => e.Field));
 		}
 	}
 }

@@ -20,6 +20,9 @@ namespace FxCommon.Services
 			if (Path.GetInvalidPathChars().Intersect(path).Any())
 				return null;
 
+			if (Path.GetDirectoryName(path) == string.Empty)
+				return null;
+
 			path = path.Trim();
 
 			var isNetworkPath = path.StartsWith(@"\\");
@@ -41,10 +44,10 @@ namespace FxCommon.Services
 				if (isNetworkPath && !_fileSystemService.DirectoryExists(parentdir))
 					return null;
 				IEnumerable<string> subdirs = _fileSystemService.GetDirectories(parentdir).ToArray();
-				string nextdir = subdirs.SkipWhile(p => !path.Equals(p, StringComparison.Ordinal)).Skip(1).FirstOrDefault();
+				string nextdir = subdirs.SkipWhile(p => !path.Equals(p, StringComparison.OrdinalIgnoreCase)).Skip(1).FirstOrDefault();
 				if (nextdir != null)
 					return nextdir;
-				string firstmatch = subdirs.FirstOrDefault(p => p.StartsWith(path, StringComparison.Ordinal) && !p.Equals(path, StringComparison.Ordinal));
+				string firstmatch = subdirs.FirstOrDefault(p => p.StartsWith(path, StringComparison.OrdinalIgnoreCase) && !p.Equals(path, StringComparison.OrdinalIgnoreCase));
 				if (firstmatch != null)
 					return firstmatch;
 				if (subdirs.Any())
