@@ -1,6 +1,6 @@
 language: csharp
 solution: FxCommon.sln
-dotnet: 1.1.5
+dotnet: 2.0
 install:
   - nuget restore FxCommonStandard.sln
 script:
