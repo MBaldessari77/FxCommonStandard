@@ -6,4 +6,4 @@ install:
 script:
   - dotnet restore
   - dotnet build
-  - dotnet test .\FxCommonStandard.Tests\FxCommonStandard.Tests.csproj
+  - dotnet test dotnet test FxCommonStandard.Tests
