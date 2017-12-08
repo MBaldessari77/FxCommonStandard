@@ -38,7 +38,7 @@ namespace FxCommonStandard.Tests
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedir", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedir", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 
 			var utils = new PathService(fileSystemService.Object);
@@ -54,10 +54,10 @@ namespace FxCommonStandard.Tests
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedir\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedir\", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\somedir\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\somedir\", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(Enumerable.Empty<string>());
 
 			var utils = new PathService(fileSystemService.Object);
@@ -73,10 +73,10 @@ namespace FxCommonStandard.Tests
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedir\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedir\", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\somedir\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\somedir\", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { @"c:\somedir\subdira" });
 
 			var utils = new PathService(fileSystemService.Object);
@@ -92,10 +92,10 @@ namespace FxCommonStandard.Tests
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedira", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedira", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { @"c:\somedira" });
 
 			var utils = new PathService(fileSystemService.Object);
@@ -111,13 +111,13 @@ namespace FxCommonStandard.Tests
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedira", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedira", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedirb", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\somedirb", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { @"c:\somedira", @"c:\somedirb" });
 
 			var utils = new PathService(fileSystemService.Object);
@@ -137,10 +137,10 @@ namespace FxCommonStandard.Tests
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\some", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\some", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { @"c:\somedir", @"c:\otherdir" });
 
 			var utils = new PathService(fileSystemService.Object);
@@ -164,19 +164,19 @@ namespace FxCommonStandard.Tests
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"\\networkpath", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"\\networkpath", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"\\networkpath\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"\\networkpath\", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"\\networkpath\share", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"\\networkpath\share", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"\\networkpath", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"\\networkpath", StringComparison.InvariantCultureIgnoreCase))))
 				.Throws<ArgumentException>();
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"\\networkpath\", StringComparison.OrdinalIgnoreCase))))
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"\\networkpath\", StringComparison.InvariantCultureIgnoreCase))))
 				.Throws<ArgumentException>();
 
 			var utils = new PathService(fileSystemService.Object);

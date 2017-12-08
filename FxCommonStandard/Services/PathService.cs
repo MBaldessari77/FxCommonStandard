@@ -44,10 +44,10 @@ namespace FxCommon.Services
 				if (isNetworkPath && !_fileSystemService.DirectoryExists(parentdir))
 					return null;
 				IEnumerable<string> subdirs = _fileSystemService.GetDirectories(parentdir).ToArray();
-				string nextdir = subdirs.SkipWhile(p => !path.Equals(p, StringComparison.OrdinalIgnoreCase)).Skip(1).FirstOrDefault();
+				string nextdir = subdirs.SkipWhile(p => !path.Equals(p, StringComparison.InvariantCultureIgnoreCase)).Skip(1).FirstOrDefault();
 				if (nextdir != null)
 					return nextdir;
-				string firstmatch = subdirs.FirstOrDefault(p => p.StartsWith(path, StringComparison.OrdinalIgnoreCase) && !p.Equals(path, StringComparison.OrdinalIgnoreCase));
+				string firstmatch = subdirs.FirstOrDefault(p => p.StartsWith(path, StringComparison.InvariantCultureIgnoreCase) && !p.Equals(path, StringComparison.InvariantCultureIgnoreCase));
 				if (firstmatch != null)
 					return firstmatch;
 				if (subdirs.Any())
