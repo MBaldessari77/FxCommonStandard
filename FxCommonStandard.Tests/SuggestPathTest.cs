@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FxCommon.Contracts;
@@ -133,32 +132,18 @@ namespace FxCommonStandard.Tests
 			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" C:\SOMEDIRB "));
 		}
 
-		class Mock : IFileSystemService
-		{
-			public bool DirectoryExists(string path)
-			{
-				return string.Equals(path,@"c:\", StringComparison.InvariantCultureIgnoreCase);
-			}
-
-			public IEnumerable<string> GetDirectories(string path)
-			{
-				yield return @"c:\somedir";
-				yield return @"c:\otherdir";
-			}
-		}
-
 		[Fact]
 		public void WhenPathIsPassedWithNoEndingBackslashIsSearchedFirstDirectoryThatStartsWithLastToken()
 		{
-			//var fileSystemService = new Mock<IFileSystemService>();
-			//fileSystemService
-			//	.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\some", StringComparison.InvariantCultureIgnoreCase))))
-			//	.Returns(true);
-			//fileSystemService
-			//	.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.InvariantCultureIgnoreCase))))
-			//	.Returns(new[] { @"c:\somedir", @"c:\otherdir" });
+			var fileSystemService = new Mock<IFileSystemService>();
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals(@"c:\some", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(new[] { @"c:\somedir", @"c:\otherdir" });
 
-			var utils = new PathService(new Mock());
+			var utils = new PathService(fileSystemService.Object);
 
 			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\some"));
 			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"c:\somedir"));
