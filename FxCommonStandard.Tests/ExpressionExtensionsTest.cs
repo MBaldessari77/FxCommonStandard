@@ -1,4 +1,4 @@
-using FxCommon.Extensions;
+using FxCommonStandard.Extensions;
 using Xunit;
 
 namespace FxCommonStandard.Tests

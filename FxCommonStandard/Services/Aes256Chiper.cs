@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace FxCommon.Services
+namespace FxCommonStandard.Services
 {
 	/// <summary>
 	/// Chiper service helper on AES256 .NET chiper.

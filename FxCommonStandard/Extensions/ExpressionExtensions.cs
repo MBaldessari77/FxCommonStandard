@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace FxCommon.Extensions
+namespace FxCommonStandard.Extensions
 {
 	public static class ExpressionExtensions
 	{

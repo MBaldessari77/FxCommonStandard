@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using FxCommon.Services;
+using FxCommonStandard.Services;
 using Xunit;
 
 namespace FxCommonStandard.Tests

@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using FxCommon.Contracts;
-using FxCommon.Services;
+using FxCommonStandard.Contracts;
+using FxCommonStandard.Services;
 using Moq;
 using Xunit;
 

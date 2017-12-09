@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using FxCommon.Contracts;
+using FxCommonStandard.Contracts;
 
-namespace FxCommon.Services
+namespace FxCommonStandard.Services
 {
 	public class FileSystemService : IFileSystemService
 	{

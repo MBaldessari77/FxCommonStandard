@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FxCommon.Extensions
+namespace FxCommonStandard.Extensions
 {
 // ReSharper disable once InconsistentNaming
 	public static class GCExtensions

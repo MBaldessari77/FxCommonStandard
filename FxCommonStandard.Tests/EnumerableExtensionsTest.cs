@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FxCommon.Extensions;
+using FxCommonStandard.Extensions;
 using Xunit;
 
 namespace FxCommonStandard.Tests

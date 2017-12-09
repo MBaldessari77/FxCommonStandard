@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FxCommon.Contracts
+namespace FxCommonStandard.Contracts
 {
 	public interface IFileSystemService
 	{

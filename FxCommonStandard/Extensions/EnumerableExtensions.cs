@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FxCommon.Extensions
+namespace FxCommonStandard.Extensions
 {
 	public static class EnumerableExtensions
 	{
