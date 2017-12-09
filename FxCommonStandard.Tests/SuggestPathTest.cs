@@ -145,18 +145,18 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\some")); Console.WriteLine("A");
-			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"c:\somedir")); Console.WriteLine("B");
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\otherdir")); Console.WriteLine("C");
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\SOME")); Console.WriteLine("D");
-			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"C:\SOMEDIR")); Console.WriteLine("E");
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\OTHERDIR")); Console.WriteLine("F");
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\some ")); Console.WriteLine("G");
-			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" c:\somedir ")); Console.WriteLine("H");
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\otherdir ")); Console.WriteLine("I");
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\SOME ")); Console.WriteLine("L");
-			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" C:\SOMEDIR ")); Console.WriteLine("M");
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\OTHERDIR ")); Console.WriteLine("N");
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\some"));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"c:\somedir"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\otherdir"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\SOME"));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"C:\SOMEDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\OTHERDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\some "));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" c:\somedir "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\otherdir "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\SOME "));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" C:\SOMEDIR "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\OTHERDIR "));
 		}
 
 		[Fact]
