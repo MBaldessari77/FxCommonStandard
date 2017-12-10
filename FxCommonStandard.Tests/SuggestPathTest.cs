@@ -43,10 +43,10 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\somedir"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"C:\SOMEDIR", utils.SuggestPath(@"C:\SOMEDIR"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\somedir "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"C:\SOMEDIR", utils.SuggestPath(@" C:\SOMEDIR "), StringComparer.InvariantCultureIgnoreCase);
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\somedir"));
+			Assert.Equal(@"C:\SOMEDIR", utils.SuggestPath(@"C:\SOMEDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\somedir "));
+			Assert.Equal(@"C:\SOMEDIR", utils.SuggestPath(@" C:\SOMEDIR "));
 		}
 
 		[Fact]
@@ -62,10 +62,10 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.Equal(@"c:\somedir\", utils.SuggestPath(@"c:\somedir\"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"C:\SOMEDIR\", utils.SuggestPath(@"C:\SOMEDIR\"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir\", utils.SuggestPath(@" c:\somedir\ "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"C:\SOMEDIR\", utils.SuggestPath(@" C:\SOMEDIR\ "), StringComparer.InvariantCultureIgnoreCase);
+			Assert.Equal(@"c:\somedir\", utils.SuggestPath(@"c:\somedir\"));
+			Assert.Equal(@"C:\SOMEDIR\", utils.SuggestPath(@"C:\SOMEDIR\"));
+			Assert.Equal(@"c:\somedir\", utils.SuggestPath(@" c:\somedir\ "));
+			Assert.Equal(@"C:\SOMEDIR\", utils.SuggestPath(@" C:\SOMEDIR\ "));
 		}
 
 		[Fact]
@@ -81,10 +81,10 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@"c:\somedir\"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@"C:\SOMEDIR\"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@" c:\somedir\ "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@" C:\SOMEDIR\ "), StringComparer.InvariantCultureIgnoreCase);
+			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@"c:\somedir\"));
+			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@"C:\SOMEDIR\"));
+			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@" c:\somedir\ "));
+			Assert.Equal(@"c:\somedir\subdira", utils.SuggestPath(@" C:\SOMEDIR\ "));
 		}
 
 		[Fact]
@@ -100,10 +100,10 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"c:\somedira"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"C:\SOMEDIRA"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" c:\somedira "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" C:\SOMEDIRA "), StringComparer.InvariantCultureIgnoreCase);
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"c:\somedira"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"C:\SOMEDIRA"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" c:\somedira "));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" C:\SOMEDIRA "));
 		}
 
 		[Fact]
@@ -122,14 +122,14 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@"c:\somedira"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@"C:\SOMEDIRA"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"c:\somedirb"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"C:\SOMEDIRB"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@" c:\somedira "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@" C:\SOMEDIRA "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" c:\somedirb "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" C:\SOMEDIRB "), StringComparer.InvariantCultureIgnoreCase);
+			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@"c:\somedira"));
+			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@"C:\SOMEDIRA"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"c:\somedirb"));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@"C:\SOMEDIRB"));
+			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@" c:\somedira "));
+			Assert.Equal(@"c:\somedirb", utils.SuggestPath(@" C:\SOMEDIRA "));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" c:\somedirb "));
+			Assert.Equal(@"c:\somedira", utils.SuggestPath(@" C:\SOMEDIRB "));
 		}
 
 		[Fact]
@@ -145,17 +145,18 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\some"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\otherdir"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\SOME"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"C:\SOMEDIR"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\OTHERDIR"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\some "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" c:\somedir "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\otherdir "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\SOME "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" C:\SOMEDIR "), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\OTHERDIR "), StringComparer.InvariantCultureIgnoreCase);
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\some"));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"c:\somedir"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\otherdir"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\SOME"));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"C:\SOMEDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\OTHERDIR"));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\some "));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" c:\somedir "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\otherdir "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\SOME "));
+			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" C:\SOMEDIR "));
+			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\OTHERDIR "));
 		}
 
 		[Fact]
@@ -180,9 +181,9 @@ namespace FxCommonStandard.Tests
 
 			var utils = new PathService(fileSystemService.Object);
 
-			Assert.Equal(@"\\networkpath", utils.SuggestPath(@"\\networkpath"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"\\networkpath\", utils.SuggestPath(@"\\networkpath\"), StringComparer.InvariantCultureIgnoreCase);
-			Assert.Equal(@"\\networkpath\share", utils.SuggestPath(@"\\networkpath\share"), StringComparer.InvariantCultureIgnoreCase);
+			Assert.Equal(@"\\networkpath", utils.SuggestPath(@"\\networkpath"));
+			Assert.Equal(@"\\networkpath\", utils.SuggestPath(@"\\networkpath\"));
+			Assert.Equal(@"\\networkpath\share", utils.SuggestPath(@"\\networkpath\share"));
 		}
 
 		[Fact]
