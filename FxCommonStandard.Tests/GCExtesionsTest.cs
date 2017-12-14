@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
-using System.Threading;
+﻿using System.Threading;
 using FxCommonStandard.Extensions;
 using FxCommonStandard.Tests.TestDoubles;
 using Xunit;
@@ -16,11 +14,13 @@ namespace FxCommonStandard.Tests
 			int ctorCalls = LifeTimeSpyStub.CtorCalls;
 			int finalizerCalls = LifeTimeSpyStub.FinalizerCalls;
 
+			// ReSharper disable once NotAccessedVariable
 			var stub = new LifeTimeSpyStub();
 
 			Assert.Equal(ctorCalls + 1, LifeTimeSpyStub.CtorCalls);
 			Assert.Equal(finalizerCalls, LifeTimeSpyStub.FinalizerCalls);
 
+			// ReSharper disable once RedundantAssignment
 			stub = null;
 
 			Assert.Equal(ctorCalls + 1, LifeTimeSpyStub.CtorCalls);
