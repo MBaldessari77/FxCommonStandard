@@ -133,7 +133,7 @@ namespace FxCommonStandard.Tests
 		}
 
 		[Fact]
-		public void WhenPathIsPassedWithNoEndingBackslashIsSearchedFirstDirectoryThatStartsWithLastToken()
+		public void WhenPathIsPassedWithNoEndingBackslashIsSearchedNextDirectoryThatStartsWithLastToken()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
@@ -141,22 +141,22 @@ namespace FxCommonStandard.Tests
 				.Returns(true);
 			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals(@"c:\", StringComparison.InvariantCultureIgnoreCase))))
-				.Returns(new[] { @"c:\somedir", @"c:\otherdir" });
+				.Returns(new[] { @"c:\somedir", @"c:\otherdir", @"c:\some" });
 
 			var utils = new PathService(fileSystemService.Object);
 
 			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\some"));
 			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"c:\somedir"));
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"c:\otherdir"));
+			Assert.Equal(@"c:\some", utils.SuggestPath(@"c:\otherdir"));
 			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\SOME"));
 			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@"C:\SOMEDIR"));
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@"C:\OTHERDIR"));
+			Assert.Equal(@"c:\some", utils.SuggestPath(@"C:\OTHERDIR"));
 			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\some "));
 			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" c:\somedir "));
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" c:\otherdir "));
+			Assert.Equal(@"c:\some", utils.SuggestPath(@" c:\otherdir "));
 			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\SOME "));
 			Assert.Equal(@"c:\otherdir", utils.SuggestPath(@" C:\SOMEDIR "));
-			Assert.Equal(@"c:\somedir", utils.SuggestPath(@" C:\OTHERDIR "));
+			Assert.Equal(@"c:\some", utils.SuggestPath(@" C:\OTHERDIR "));
 		}
 
 		[Fact]
