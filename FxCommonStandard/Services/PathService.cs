@@ -47,9 +47,9 @@ namespace FxCommonStandard.Services
 				string nextdir = subdirs.SkipWhile(p => !path.Equals(p, StringComparison.InvariantCultureIgnoreCase)).Skip(1).FirstOrDefault();
 				if (nextdir != null)
 					return nextdir;
-				string firstmatch = subdirs.FirstOrDefault(p => p.StartsWith(path, StringComparison.InvariantCultureIgnoreCase) && !p.Equals(path, StringComparison.InvariantCultureIgnoreCase));
-				if (firstmatch != null)
-					return firstmatch;
+				//string firstmatch = subdirs.FirstOrDefault(p => p.StartsWith(path, StringComparison.InvariantCultureIgnoreCase) && !p.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+				//if (firstmatch != null)
+				//	return firstmatch;
 				if (subdirs.Any())
 					return subdirs.First();
 			}
