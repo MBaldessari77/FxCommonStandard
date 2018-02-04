@@ -8,7 +8,7 @@ namespace FxCommonStandard.Tests
 // ReSharper disable once InconsistentNaming
 	public class GCExtesionsTest
 	{
-		[Fact(Skip = "In.NET Core 2.0 See https://github.com/dotnet/coreclr/issues/15207")]
+		[Fact(Skip = "For .NET Core 2.0 See https://github.com/dotnet/coreclr/issues/15207")]
 		public void WhenIsCalledCollectAndWaitFinalizersFinalizersOnReleasedObjectIsInvoked()
 		{
 			int ctorCalls = LifeTimeSpyStub.CtorCalls;
