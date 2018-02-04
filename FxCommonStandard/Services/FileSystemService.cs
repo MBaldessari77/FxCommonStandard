@@ -4,6 +4,7 @@ using FxCommonStandard.Contracts;
 
 namespace FxCommonStandard.Services
 {
+	// ReSharper disable once UnusedMember.Global
 	public class FileSystemService : IFileSystemService
 	{
 		public bool DirectoryExists(string path) { return Directory.Exists(path); }
