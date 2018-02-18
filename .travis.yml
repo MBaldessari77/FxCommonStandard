@@ -1,0 +1,9 @@
+language: csharp
+solution: FxCommon.sln
+dotnet: 2.0.0
+install:
+  - nuget restore FxCommonStandard.sln
+script:
+  - dotnet restore
+  - dotnet build
+  - dotnet test FxCommonStandard.Tests
