@@ -6,6 +6,8 @@
     <Authors>Marco Baldessari</Authors>
     <Company />
     <Product />
+    <Version>1.0.1</Version>
+    <Description>.NET standard 2.0 library used by Fx projects</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
