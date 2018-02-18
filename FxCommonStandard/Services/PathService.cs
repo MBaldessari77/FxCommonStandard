@@ -25,11 +25,11 @@ namespace FxCommonStandard.Services
 
 			path = path.Trim();
 
-			var isNetworkPath = path.StartsWith(@"\\");
-			if (isNetworkPath && path.Substring(2).Count(c => c == '\\') <= 1)
+			var isNetworkPath = path.StartsWith($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}");
+			if (isNetworkPath && path.Substring(2).Count(c => c == Path.DirectorySeparatorChar) <= 1)
 				return _fileSystemService.DirectoryExists(path) ? path : null;
 
-			if (path.EndsWith(@"\"))
+			if (path.EndsWith($@"{Path.DirectorySeparatorChar}"))
 			{
 				if (!_fileSystemService.DirectoryExists(path))
 					return null;
@@ -47,9 +47,6 @@ namespace FxCommonStandard.Services
 				string nextdir = subdirs.SkipWhile(p => !path.Equals(p, StringComparison.InvariantCultureIgnoreCase)).Skip(1).FirstOrDefault();
 				if (nextdir != null)
 					return nextdir;
-				//string firstmatch = subdirs.FirstOrDefault(p => p.StartsWith(path, StringComparison.InvariantCultureIgnoreCase) && !p.Equals(path, StringComparison.InvariantCultureIgnoreCase));
-				//if (firstmatch != null)
-				//	return firstmatch;
 				if (subdirs.Any())
 					return subdirs.First();
 			}
