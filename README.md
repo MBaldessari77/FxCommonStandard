@@ -6,8 +6,8 @@ FxCommonStandard using .NET Standard 2.0
 
 > by Marco Baldessari
 
-# Releases
+## Releases
 
-## [v.1.0.1](https://github.com/waldrix/FxCommonStandard/releases/tag/1.0.1)
+### [v.1.0.1](https://github.com/waldrix/FxCommonStandard/releases/tag/1.0.1)
 
 * Fixed PathService tests for Unix based systems
