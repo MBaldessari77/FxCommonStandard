@@ -40,7 +40,8 @@ namespace FxCommonStandard.Services
 			}
 			else
 			{
-				string parentdir = Directory.GetParent(path).FullName;
+				string parentdir = Directory.GetParent(path).Name;
+				parentdir = parentdir.EndsWith($"{Path.DirectorySeparatorChar}") ? parentdir : parentdir + Path.DirectorySeparatorChar;
 				if (isNetworkPath && !_fileSystemService.DirectoryExists(parentdir))
 					return null;
 				IEnumerable<string> subdirs = _fileSystemService.GetDirectories(parentdir).ToArray();
