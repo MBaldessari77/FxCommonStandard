@@ -6,7 +6,7 @@ namespace FxCommonStandard.Services
 	{
 		event EventHandler EventHappened;
 
-		public void RegisterListener(EventHandler @delegate, EventArgs expected = null) { EventHappened += (sender, e) => RaiseEvent(@delegate, e, expected); }
+		public void SubscribeEvent(EventHandler @delegate, EventArgs expected = null) { EventHappened += (sender, e) => RaiseEvent(@delegate, e, expected); }
 		public void AddEvent(EventArgs e = null) { OnEventHappened(e); }
 
 		void OnEventHappened(EventArgs e) { EventHappened?.Invoke(this, e); }
