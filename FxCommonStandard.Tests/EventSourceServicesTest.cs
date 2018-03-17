@@ -13,7 +13,7 @@ namespace FxCommonStandard.Tests
 			var service = new EventSourceService();
 
 			service.RegisterListener((sender, args) => { raisedCount++; });
-			service.RegisterEvent();
+			service.AddEvent();
 
 			Assert.Equal(1, raisedCount);
 		}
@@ -26,7 +26,7 @@ namespace FxCommonStandard.Tests
 
 			service.RegisterListener((sender, args) => { raisedCount++; }, new CustomEventArgs());
 			service.RegisterListener((sender, args) => { raisedCount++; });
-			service.RegisterEvent(new CustomEventArgs());
+			service.AddEvent(new CustomEventArgs());
 
 			Assert.Equal(1, raisedCount);
 		}
