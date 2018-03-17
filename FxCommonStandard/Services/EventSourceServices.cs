@@ -4,17 +4,17 @@ namespace FxCommonStandard.Services
 {
 	public class EventSourceService
 	{
-		event EventHandler<string> EventHappened;
+		event EventHandler EventHappened;
 
-		public void RegisterListener(EventHandler<string> @delegate, string key = null) { EventHappened += (sender, e) => RaiseEvent(sender, e, key, @delegate); }
-		public void RegisterEvent(string key = null) { OnEventHappened(key); }
+		public void RegisterListener(EventHandler @delegate, EventArgs expected = null) { EventHappened += (sender, e) => RaiseEvent(@delegate, e, expected); }
+		public void RegisterEvent(EventArgs e = null) { OnEventHappened(e); }
 
-		void OnEventHappened(string key) { EventHappened?.Invoke(this, key); }
+		void OnEventHappened(EventArgs e) { EventHappened?.Invoke(this, e); }
 
-		void RaiseEvent(object sender, string key, string expectedKey, EventHandler<string> @delegate)
+		void RaiseEvent(EventHandler @delegate, EventArgs e, EventArgs expected)
 		{
-			if (Equals(expectedKey, key))
-				@delegate(sender, key);
+			if (Equals(expected, e))
+				@delegate(this, e);
 		}
 	}
 }

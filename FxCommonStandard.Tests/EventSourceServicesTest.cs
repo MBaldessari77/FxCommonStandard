@@ -1,4 +1,5 @@
-﻿using FxCommonStandard.Services;
+﻿using System;
+using FxCommonStandard.Services;
 using Xunit;
 
 namespace FxCommonStandard.Tests
@@ -8,7 +9,7 @@ namespace FxCommonStandard.Tests
 		[Fact]
 		public void WhenAnEventIsRaisedTheListenerReceiveTheEvent()
 		{
-			int raisedCount=0;
+			int raisedCount = 0;
 			var service = new EventSourceService();
 
 			service.RegisterListener((sender, args) => { raisedCount++; });
@@ -20,14 +21,20 @@ namespace FxCommonStandard.Tests
 		[Fact]
 		public void WhenAParticularEventIsRaisedTheListenerRegisterToThisEventReceiveTheEvent()
 		{
-			int raisedCount=0;
+			int raisedCount = 0;
 			var service = new EventSourceService();
 
-			service.RegisterListener((sender, args) => { raisedCount++; }, "ParticularEvent");
-			service.RegisterListener((sender, args) => { raisedCount++; }, "AnotherEvent");
-			service.RegisterEvent("ParticularEvent");
+			service.RegisterListener((sender, args) => { raisedCount++; }, new CustomEventArgs());
+			service.RegisterListener((sender, args) => { raisedCount++; });
+			service.RegisterEvent(new CustomEventArgs());
 
 			Assert.Equal(1, raisedCount);
+		}
+
+		class CustomEventArgs : EventArgs
+		{
+			public override bool Equals(object obj) { return obj != null && obj.GetType().IsAssignableFrom(GetType()); }
+			public override int GetHashCode() { return GetType().FullName.GetHashCode(); }
 		}
 	}
 }
