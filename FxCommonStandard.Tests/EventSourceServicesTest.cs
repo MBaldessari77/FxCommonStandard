@@ -82,10 +82,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				Stopwatch stopwatch=new Stopwatch();
-				stopwatch.Start();
-				await service.WaitEventsProcessedAsync(100);
-				_output.WriteLine($"ElapsedMilliseconds = {stopwatch.ElapsedMilliseconds}");
+				await service.WaitEventsProcessedAsync(0);
 			}
 
 			Assert.Equal(1, raisedCount);

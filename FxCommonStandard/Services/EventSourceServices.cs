@@ -11,16 +11,24 @@ namespace FxCommonStandard.Services
 		readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
 		readonly ConcurrentQueue<EventArgs> _eventQueue = new ConcurrentQueue<EventArgs>();
 		readonly ConcurrentBag<Tuple<EventHandler, EventArgs>> _eventMapping = new ConcurrentBag<Tuple<EventHandler, EventArgs>>();
+		readonly Thread _eventSourcingThread;
 
 		long _processingEvent;
 		bool _disposed;
 
-		public EventSourceService() { new Thread(EventSourcingWorker).Start(); }
+		public EventSourceService()
+		{
+			_eventSourcingThread = new Thread(EventSourcingWorker);
+			_eventSourcingThread.Start();
+		}
 
 		public void Dispose()
 		{
 			Signal();
 			_disposed = true;
+#if DEBUG
+			_eventSourcingThread.Join();
+#endif
 		}
 
 		public void SubscribeEvent(EventHandler @delegate, EventArgs expected = null) { _eventMapping.Add(new Tuple<EventHandler, EventArgs>(@delegate, expected)); }
@@ -39,17 +47,17 @@ namespace FxCommonStandard.Services
 
 		public Task WaitEventsProcessedAsync(int millisecondsTimeout = -1)
 		{
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
 			return Task.Run(() =>
 			{
-				Stopwatch stopwatch = new Stopwatch();
-				stopwatch.Start();
 				while (true)
 				{
 					if (Interlocked.Read(ref _processingEvent) == 0)
 						break;
-					WaitSignal(millisecondsTimeout);
 					if (millisecondsTimeout >= 0 && stopwatch.ElapsedMilliseconds > millisecondsTimeout)
 						break;
+					WaitSignal(millisecondsTimeout);
 				}
 			});
 		}
