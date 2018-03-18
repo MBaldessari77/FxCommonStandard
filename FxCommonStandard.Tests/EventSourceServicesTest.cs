@@ -82,7 +82,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				await service.WaitEventsProcessedAsync(0);
+				await service.WaitEventsProcessedAsync(100);
 			}
 
 			Assert.Equal(1, raisedCount);
