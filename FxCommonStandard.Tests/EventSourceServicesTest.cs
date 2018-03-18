@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using FxCommonStandard.Services;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace FxCommonStandard.Tests
 {
 	public class EventSourceServicesTest
 	{
-		private readonly ITestOutputHelper _output;
-
-		public EventSourceServicesTest(ITestOutputHelper output)
-		{
-			_output = output;
-		}
-
 		[Fact]
-		public async void WhenAnEventIsRaisedTheListenerReceiveTheEvent()
+		public void WhenAnEventIsRaisedTheListenerReceiveTheEvent()
 		{
 			int raisedCount = 0;
 
@@ -27,14 +18,14 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				await service.WaitEventsProcessedAsync();
+				WaitSpinLock(service);
 			}
 
 			Assert.Equal(1, raisedCount);
 		}
 
 		[Fact]
-		public async void WhenAParticularEventIsRaisedTheListenerRegisterToThisEventReceiveTheEvent()
+		public void WhenAParticularEventIsRaisedTheListenerRegisterToThisEventReceiveTheEvent()
 		{
 			int raisedCount = 0;
 
@@ -45,14 +36,15 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent(new CustomEventArgs());
 
-				await service.WaitEventsProcessedAsync();
+				//await service.WaitEventsProcessedAsync();
+				WaitSpinLock(service);
 			}
 
 			Assert.Equal(1, raisedCount);
 		}
 
 		[Fact]
-		public async void WhenAnEventIsRaisedAllTheListenerReceiveTheEvent()
+		public void WhenAnEventIsRaisedAllTheListenerReceiveTheEvent()
 		{
 			int raisedCount1 = 0;
 			int raisedCount2 = 0;
@@ -64,7 +56,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				await service.WaitEventsProcessedAsync();
+				WaitSpinLock(service);
 			}
 
 			Assert.Equal(1, raisedCount1);
@@ -72,7 +64,7 @@ namespace FxCommonStandard.Tests
 		}
 
 		[Fact]
-		public async void AStallOnAListenerOnEventCantBlockOtherListener()
+		public void AStallOnAListenerOnEventCantBlockOtherListener()
 		{
 			int raisedCount = 0;
 			using (var service = new EventSourceService())
@@ -82,10 +74,16 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				await service.WaitEventsProcessedAsync(100);
+				WaitSpinLock(service, 1);
 			}
 
 			Assert.Equal(1, raisedCount);
+		}
+
+		void WaitSpinLock(EventSourceService service, int remainingProcessingEvents = 0)
+		{
+			while (service.ProcessingEvents > remainingProcessingEvents)
+				Thread.Sleep(0);
 		}
 
 		class CustomEventArgs : EventArgs
