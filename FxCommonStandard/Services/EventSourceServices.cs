@@ -18,7 +18,7 @@ namespace FxCommonStandard.Services
 
 		public void Dispose()
 		{
-			Signal();
+			_event.Set();
 			_disposed = true;
 		}
 
@@ -35,7 +35,7 @@ namespace FxCommonStandard.Services
 
 			_eventQueue.Enqueue(e);
 
-			Signal();
+			_event.Set();
 		}
 
 		void EventSourcingWorker()
@@ -44,42 +44,21 @@ namespace FxCommonStandard.Services
 			{
 				if (_eventQueue.TryDequeue(out var e))
 				{
-					ResetSignal();
+					_event.Reset();
 
 					foreach (Tuple<EventHandler, EventArgs> tuple in _eventMapping)
 						if (Equals(tuple.Item2, e))
 							Task.Run(() =>
 							{
 								tuple.Item1(this, tuple.Item2);
-
 								Interlocked.Decrement(ref _processingEvent);
-								if (Interlocked.Read(ref _processingEvent) == 0)
-									Signal();
 							});
 
 					continue;
 				}
 
-				WaitSignal();
+				_event.Wait();
 			}
-		}
-
-		void Signal()
-		{
-			lock (this)
-				_event.Set();
-		}
-
-		void ResetSignal()
-		{
-			lock (this)
-				_event.Reset();
-		}
-
-		void WaitSignal()
-		{
-			// ReSharper disable once InconsistentlySynchronizedField
-			_event.Wait();
 		}
 	}
 }
