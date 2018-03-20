@@ -5,14 +5,14 @@ using Xunit;
 
 namespace FxCommonStandard.Tests
 {
-	public class EventSourceServicesTest
+	public class EventSourcingServicesTest
 	{
 		[Fact]
 		public void WhenAnEventIsRaisedTheListenerReceiveTheEvent()
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourceService())
+			using (var service = new EventSourcingService())
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
 
@@ -29,14 +29,13 @@ namespace FxCommonStandard.Tests
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourceService())
+			using (var service = new EventSourcingService())
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount++; }, new CustomEventArgs());
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
 
 				service.AddEvent(new CustomEventArgs());
 
-				//await service.WaitEventsProcessedAsync();
 				WaitSpinLock(service);
 			}
 
@@ -49,7 +48,7 @@ namespace FxCommonStandard.Tests
 			int raisedCount1 = 0;
 			int raisedCount2 = 0;
 
-			using (var service = new EventSourceService())
+			using (var service = new EventSourcingService())
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount1++; });
 				service.SubscribeEvent((sender, args) => { raisedCount2++; });
@@ -67,7 +66,7 @@ namespace FxCommonStandard.Tests
 		public void AStallOnAListenerOnEventCantBlockOtherListener()
 		{
 			int raisedCount = 0;
-			using (var service = new EventSourceService())
+			using (var service = new EventSourcingService())
 			{
 				service.SubscribeEvent((sender, args) => { Thread.Sleep(int.MaxValue); });
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
@@ -80,7 +79,43 @@ namespace FxCommonStandard.Tests
 			Assert.Equal(1, raisedCount);
 		}
 
-		void WaitSpinLock(EventSourceService service, int remainingProcessingEvents = 0)
+		[Fact]
+		public void TwoServiceSubriscribeAnEventReceivedEventOnTheirListener()
+		{
+			int raisedCount1 = 0;
+			int raisedCount2 = 0;
+
+			using (var service = new EventSourcingService())
+			{
+				service.SubscribeEvent((sender, args) => ++raisedCount1);
+				service.SubscribeEvent((sender, args) => ++raisedCount2);
+
+				var th1 = new Thread(() =>
+				  {
+					  // ReSharper disable once AccessToDisposedClosure
+					  WaitSpinLock(service);
+				  });
+
+				var th2 = new Thread(() =>
+				  {
+					  // ReSharper disable once AccessToDisposedClosure
+					  WaitSpinLock(service);
+				  });
+
+				service.AddEvent();
+
+				th1.Start();
+				th2.Start();
+
+				th1.Join();
+				th2.Join();
+			}
+
+			Assert.Equal(1, raisedCount1);
+			Assert.Equal(1, raisedCount2);
+		}
+
+		void WaitSpinLock(EventSourcingService service, int remainingProcessingEvents = 0)
 		{
 			while (service.ProcessingEvents > remainingProcessingEvents)
 				Thread.Sleep(0);

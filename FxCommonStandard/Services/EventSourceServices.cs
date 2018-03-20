@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FxCommonStandard.Services
 {
-	public class EventSourceService : IDisposable
+	public class EventSourcingService : IDisposable
 	{
 		readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
 		readonly ConcurrentQueue<EventArgs> _eventQueue = new ConcurrentQueue<EventArgs>();
@@ -14,7 +14,7 @@ namespace FxCommonStandard.Services
 		long _processingEvent;
 		bool _disposed;
 
-		public EventSourceService() { new Thread(EventSourcingWorker).Start(); }
+		public EventSourcingService() { new Thread(EventSourcingWorker).Start(); }
 
 		public void Dispose()
 		{
