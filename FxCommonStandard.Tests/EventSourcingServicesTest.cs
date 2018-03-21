@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
+using FxCommonStandard.Contracts;
 using FxCommonStandard.Services;
+using Moq;
 using Xunit;
 
 namespace FxCommonStandard.Tests
@@ -12,7 +14,7 @@ namespace FxCommonStandard.Tests
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourcingService(null))
+			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
 
@@ -29,7 +31,7 @@ namespace FxCommonStandard.Tests
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourcingService(null))
+			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount++; }, new CustomEventArgs());
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
@@ -48,7 +50,7 @@ namespace FxCommonStandard.Tests
 			int raisedCount1 = 0;
 			int raisedCount2 = 0;
 
-			using (var service = new EventSourcingService(null))
+			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount1++; });
 				service.SubscribeEvent((sender, args) => { raisedCount2++; });
@@ -66,7 +68,7 @@ namespace FxCommonStandard.Tests
 		public void AStallOnAListenerOnEventCantBlockOtherListener()
 		{
 			int raisedCount = 0;
-			using (var service = new EventSourcingService(null))
+			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
 			{
 				service.SubscribeEvent((sender, args) => { Thread.Sleep(int.MaxValue); });
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
@@ -85,7 +87,7 @@ namespace FxCommonStandard.Tests
 			int raisedCount1 = 0;
 			int raisedCount2 = 0;
 
-			using (var service = new EventSourcingService(null))
+			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
 			{
 				service.SubscribeEvent((sender, args) => ++raisedCount1);
 				service.SubscribeEvent((sender, args) => ++raisedCount2);
@@ -113,6 +115,20 @@ namespace FxCommonStandard.Tests
 
 			Assert.Equal(1, raisedCount1);
 			Assert.Equal(1, raisedCount2);
+		}
+
+		[Fact]
+		public void AnAddedEventIsPersistedAsNewInAnUnitOfWork()
+		{
+			var unitOfWork = new Mock<IUnitOfWork<EventArgs>>();
+			var e = new EventArgs();
+
+			using (var service = new EventSourcingService(unitOfWork.Object))
+				service.AddEvent(e);
+
+			unitOfWork.Verify(u => u.New(e));
+			unitOfWork.Verify(u => u.Commit());
+
 		}
 
 		void WaitSpinLock(EventSourcingService service, int remainingProcessingEvents = 0)

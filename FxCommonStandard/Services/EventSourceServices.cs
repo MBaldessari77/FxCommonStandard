@@ -41,6 +41,9 @@ namespace FxCommonStandard.Services
 
 			_eventQueue.Enqueue(e);
 
+			_unitOfWork.New(e ?? new EventArgs());
+			_unitOfWork.Commit();
+
 			_event.Set();
 		}
 
