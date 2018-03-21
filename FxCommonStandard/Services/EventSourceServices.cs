@@ -2,11 +2,13 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using FxCommonStandard.Contracts;
 
 namespace FxCommonStandard.Services
 {
 	public class EventSourcingService : IDisposable
 	{
+		readonly IUnitOfWork<EventArgs> _unitOfWork;
 		readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
 		readonly ConcurrentQueue<EventArgs> _eventQueue = new ConcurrentQueue<EventArgs>();
 		readonly ConcurrentBag<Tuple<EventHandler, EventArgs>> _eventMapping = new ConcurrentBag<Tuple<EventHandler, EventArgs>>();
@@ -14,7 +16,11 @@ namespace FxCommonStandard.Services
 		long _processingEvent;
 		bool _disposed;
 
-		public EventSourcingService() { new Thread(EventSourcingWorker).Start(); }
+		public EventSourcingService(IUnitOfWork<EventArgs> unitOfWork)
+		{
+			_unitOfWork = unitOfWork;
+			new Thread(EventSourcingWorker).Start();
+		}
 
 		public void Dispose()
 		{

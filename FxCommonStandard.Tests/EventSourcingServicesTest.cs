@@ -12,7 +12,7 @@ namespace FxCommonStandard.Tests
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourcingService())
+			using (var service = new EventSourcingService(null))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
 
@@ -29,7 +29,7 @@ namespace FxCommonStandard.Tests
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourcingService())
+			using (var service = new EventSourcingService(null))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount++; }, new CustomEventArgs());
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
@@ -48,7 +48,7 @@ namespace FxCommonStandard.Tests
 			int raisedCount1 = 0;
 			int raisedCount2 = 0;
 
-			using (var service = new EventSourcingService())
+			using (var service = new EventSourcingService(null))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount1++; });
 				service.SubscribeEvent((sender, args) => { raisedCount2++; });
@@ -66,7 +66,7 @@ namespace FxCommonStandard.Tests
 		public void AStallOnAListenerOnEventCantBlockOtherListener()
 		{
 			int raisedCount = 0;
-			using (var service = new EventSourcingService())
+			using (var service = new EventSourcingService(null))
 			{
 				service.SubscribeEvent((sender, args) => { Thread.Sleep(int.MaxValue); });
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
@@ -85,7 +85,7 @@ namespace FxCommonStandard.Tests
 			int raisedCount1 = 0;
 			int raisedCount2 = 0;
 
-			using (var service = new EventSourcingService())
+			using (var service = new EventSourcingService(null))
 			{
 				service.SubscribeEvent((sender, args) => ++raisedCount1);
 				service.SubscribeEvent((sender, args) => ++raisedCount2);
