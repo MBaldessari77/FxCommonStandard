@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using FxCommonStandard.Contracts;
@@ -11,7 +12,7 @@ namespace FxCommonStandard.Services
 		readonly IUnitOfWork<EventArgs> _unitOfWork;
 		readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
 		readonly ConcurrentQueue<EventArgs> _eventQueue = new ConcurrentQueue<EventArgs>();
-		readonly ConcurrentBag<Tuple<EventHandler, EventArgs>> _eventMapping = new ConcurrentBag<Tuple<EventHandler, EventArgs>>();
+		readonly ConcurrentBag<EventSubscription> _eventMapping = new ConcurrentBag<EventSubscription>();
 
 		long _processingEvent;
 		bool _disposed;
@@ -30,13 +31,13 @@ namespace FxCommonStandard.Services
 
 		public long ProcessingEvents => Interlocked.Read(ref _processingEvent);
 
-		public void SubscribeEvent(EventHandler @delegate, EventArgs expected = null) { _eventMapping.Add(new Tuple<EventHandler, EventArgs>(@delegate, expected)); }
+		public void SubscribeEvent(EventHandler @delegate, EventArgs expected = null) { _eventMapping.Add(new EventSubscription { EventHandler = @delegate, EventArgs = expected }); }
 
 		public void AddEvent(EventArgs e = null)
 		{
 			//Update event per delegate count
-			foreach (Tuple<EventHandler, EventArgs> tuple in _eventMapping)
-				if (Equals(tuple.Item2, e))
+			foreach (EventSubscription subscription in _eventMapping)
+				if (Equals(subscription.EventArgs, e))
 					Interlocked.Increment(ref _processingEvent);
 
 			_eventQueue.Enqueue(e);
@@ -47,6 +48,14 @@ namespace FxCommonStandard.Services
 			_event.Set();
 		}
 
+		public void WaitEventProcessed(int timeoutMilliseconds=-1)
+		{
+			var sw = new Stopwatch();
+			sw.Start();
+			while (ProcessingEvents > 0 && timeoutMilliseconds < 0 || sw.ElapsedMilliseconds <= timeoutMilliseconds)
+				Thread.Sleep(0);
+		}
+
 		void EventSourcingWorker()
 		{
 			while (!_disposed)
@@ -55,13 +64,13 @@ namespace FxCommonStandard.Services
 				{
 					_event.Reset();
 
-					foreach (Tuple<EventHandler, EventArgs> tuple in _eventMapping)
-						if (Equals(tuple.Item2, e))
+					foreach (EventSubscription subscription in _eventMapping)
+						if (Equals(subscription.EventArgs, e))
 							Task.Run(() =>
 							{
 								try
 								{
-									tuple.Item1(this, e);
+									subscription.EventHandler(this, e);
 								}
 								finally
 								{
@@ -74,6 +83,12 @@ namespace FxCommonStandard.Services
 
 				_event.Wait();
 			}
+		}
+
+		class EventSubscription
+		{
+			public EventHandler EventHandler { get; set; }
+			public EventArgs EventArgs { get; set; }
 		}
 	}
 }

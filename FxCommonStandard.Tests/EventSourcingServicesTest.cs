@@ -20,7 +20,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				WaitSpinLock(service);
+				service.WaitEventProcessed();
 			}
 
 			Assert.Equal(1, raisedCount);
@@ -38,7 +38,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent(new CustomEventArgs());
 
-				WaitSpinLock(service);
+				service.WaitEventProcessed();
 			}
 
 			Assert.Equal(1, raisedCount);
@@ -57,7 +57,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				WaitSpinLock(service);
+				service.WaitEventProcessed();
 			}
 
 			Assert.Equal(1, raisedCount1);
@@ -75,7 +75,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				WaitSpinLock(service, 1);
+				service.WaitEventProcessed(0);
 			}
 
 			Assert.Equal(1, raisedCount);
@@ -95,13 +95,13 @@ namespace FxCommonStandard.Tests
 				var th1 = new Thread(() =>
 				  {
 					  // ReSharper disable once AccessToDisposedClosure
-					  WaitSpinLock(service);
+					  service.WaitEventProcessed();
 				  });
 
 				var th2 = new Thread(() =>
 				  {
 					  // ReSharper disable once AccessToDisposedClosure
-					  WaitSpinLock(service);
+					  service.WaitEventProcessed();
 				  });
 
 				service.AddEvent();
@@ -139,7 +139,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				WaitSpinLock(service);
+				service.WaitEventProcessed();
 			}
 		}
 
@@ -155,17 +155,28 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent(@event);
 
-				WaitSpinLock(service);
+				service.WaitEventProcessed();
 
 				Assert.Same(receivedEvent, @event);
 			}
 		}
 
-		void WaitSpinLock(EventSourcingService service, int remainingProcessingEvents = 0)
-		{
-			while (service.ProcessingEvents > remainingProcessingEvents)
-				Thread.Sleep(0);
-		}
+		//[Fact]
+		//public async Task WhenAnEventIsRaisedTheListenerReceiveTheEventAsync()
+		//{
+		//	int raisedCount = 0;
+
+		//	using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+		//	{
+		//		service.SubscribeEvent(async (sender, args) => await Task.FromResult(raisedCount++));
+
+		//		service.AddEvent();
+
+		//		WaitSpinLock(service);
+		//	}
+
+		//	Assert.Equal(1, raisedCount);
+		//}
 
 		class CustomEventArgs : EventArgs
 		{

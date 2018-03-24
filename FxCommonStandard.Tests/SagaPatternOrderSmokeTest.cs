@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using FxCommonStandard.Contracts;
 using FxCommonStandard.Services;
@@ -27,8 +26,7 @@ namespace FxCommonStandard.Tests
 				orderService.OrderChekouted += (sender, args) => approved = args.Customer == SolventCustomer && args.Result;
 				orderService.CreateOrder(SolventCustomer, 100m);
 
-				while (eventSourcingService.ProcessingEvents > 0)
-					Thread.Sleep(0);
+				eventSourcingService.WaitEventProcessed();
 
 				Assert.True(approved);
 				Assert.Equal(customerCredit - 100m, customerService.GetCredit(SolventCustomer));
@@ -48,8 +46,7 @@ namespace FxCommonStandard.Tests
 				orderService.OrderChekouted += (sender, args) => approved = args.Customer == InsolventCustomer && args.Result;
 				orderService.CreateOrder(InsolventCustomer, 100m);
 
-				while (eventSourcingService.ProcessingEvents > 0)
-					Thread.Sleep(0);
+				eventSourcingService.WaitEventProcessed();
 
 				Assert.False(approved);
 				Assert.True(customerCredit < 100m);
