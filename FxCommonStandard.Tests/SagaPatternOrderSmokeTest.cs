@@ -26,7 +26,7 @@ namespace FxCommonStandard.Tests
 				orderService.OrderChekouted += (sender, args) => approved = args.Customer == SolventCustomer && args.Result;
 				orderService.CreateOrder(SolventCustomer, 100m);
 
-				eventSourcingService.WaitEventProcessed();
+				eventSourcingService.WaitEventsProcessed();
 
 				Assert.True(approved);
 				Assert.Equal(customerCredit - 100m, customerService.GetCredit(SolventCustomer));
@@ -46,7 +46,7 @@ namespace FxCommonStandard.Tests
 				orderService.OrderChekouted += (sender, args) => approved = args.Customer == InsolventCustomer && args.Result;
 				orderService.CreateOrder(InsolventCustomer, 100m);
 
-				eventSourcingService.WaitEventProcessed();
+				eventSourcingService.WaitEventsProcessed();
 
 				Assert.False(approved);
 				Assert.True(customerCredit < 100m);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using FxCommonStandard.Contracts;
 using FxCommonStandard.Services;
 using Moq;
@@ -20,7 +21,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				service.WaitEventProcessed();
+				service.WaitEventsProcessed();
 			}
 
 			Assert.Equal(1, raisedCount);
@@ -38,7 +39,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent(new CustomEventArgs());
 
-				service.WaitEventProcessed();
+				service.WaitEventsProcessed();
 			}
 
 			Assert.Equal(1, raisedCount);
@@ -57,7 +58,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				service.WaitEventProcessed();
+				service.WaitEventsProcessed();
 			}
 
 			Assert.Equal(1, raisedCount1);
@@ -75,7 +76,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				service.WaitEventProcessed(0);
+				service.WaitEventsProcessed(100);
 			}
 
 			Assert.Equal(1, raisedCount);
@@ -95,13 +96,13 @@ namespace FxCommonStandard.Tests
 				var th1 = new Thread(() =>
 				  {
 					  // ReSharper disable once AccessToDisposedClosure
-					  service.WaitEventProcessed();
+					  service.WaitEventsProcessed();
 				  });
 
 				var th2 = new Thread(() =>
 				  {
 					  // ReSharper disable once AccessToDisposedClosure
-					  service.WaitEventProcessed();
+					  service.WaitEventsProcessed();
 				  });
 
 				service.AddEvent();
@@ -139,7 +140,7 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent();
 
-				service.WaitEventProcessed();
+				service.WaitEventsProcessed();
 			}
 		}
 
@@ -155,28 +156,28 @@ namespace FxCommonStandard.Tests
 
 				service.AddEvent(@event);
 
-				service.WaitEventProcessed();
+				service.WaitEventsProcessed();
 
 				Assert.Same(receivedEvent, @event);
 			}
 		}
 
-		//[Fact]
-		//public async Task WhenAnEventIsRaisedTheListenerReceiveTheEventAsync()
-		//{
-		//	int raisedCount = 0;
+		[Fact]
+		public async Task WhenAnEventIsRaisedTheListenerReceiveTheEventAsync()
+		{
+			int raisedCount = 0;
 
-		//	using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
-		//	{
-		//		service.SubscribeEvent(async (sender, args) => await Task.FromResult(raisedCount++));
+			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			{
+				service.SubscribeEvent(async (sender, args) => await Task.FromResult(raisedCount++));
 
-		//		service.AddEvent();
+				service.AddEvent();
 
-		//		WaitSpinLock(service);
-		//	}
+				await service.WaitEventsProcessedAsync();
+			}
 
-		//	Assert.Equal(1, raisedCount);
-		//}
+			Assert.Equal(1, raisedCount);
+		}
 
 		class CustomEventArgs : EventArgs
 		{

@@ -48,12 +48,23 @@ namespace FxCommonStandard.Services
 			_event.Set();
 		}
 
-		public void WaitEventProcessed(int timeoutMilliseconds=-1)
+		public void WaitEventsProcessed(int timeoutMilliseconds=-1)
 		{
 			var sw = new Stopwatch();
 			sw.Start();
 			while (ProcessingEvents > 0 && timeoutMilliseconds < 0 || sw.ElapsedMilliseconds <= timeoutMilliseconds)
 				Thread.Sleep(0);
+		}
+
+		public Task WaitEventsProcessedAsync(int timeoutMilliseconds=-1)
+		{
+			return Task.Run(() =>
+			{
+				var sw = new Stopwatch();
+				sw.Start();
+				while (ProcessingEvents > 0 && timeoutMilliseconds < 0 || sw.ElapsedMilliseconds <= timeoutMilliseconds)
+					Thread.Sleep(0);
+			});
 		}
 
 		void EventSourcingWorker()
