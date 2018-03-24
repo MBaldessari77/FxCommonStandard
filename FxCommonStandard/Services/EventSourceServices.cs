@@ -59,8 +59,14 @@ namespace FxCommonStandard.Services
 						if (Equals(tuple.Item2, e))
 							Task.Run(() =>
 							{
-								tuple.Item1(this, tuple.Item2);
-								Interlocked.Decrement(ref _processingEvent);
+								try
+								{
+									tuple.Item1(this, tuple.Item2);
+								}
+								finally
+								{
+									Interlocked.Decrement(ref _processingEvent);
+								}
 							});
 
 					continue;
