@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using FxCommonStandard.Contracts;
 using FxCommonStandard.Services;
@@ -11,36 +12,63 @@ namespace FxCommonStandard.Tests
 	public class SagaPatternOrderSmokeTest
 	{
 		const string SolventCustomer = "SolventCustomer";
+		const string InsolventCustomer = "InsolventCustomer";
 
 		[Fact]
-		public void TryOrderApprovedSuccessfullySaga()
+		public void TryOrderApprovedSuccessfully()
 		{
 			using (var eventSourcingService = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
 			{
 				var orderService = new OrderService(eventSourcingService);
 				var customerService = new CustomerService(eventSourcingService);
-
 				var customerCredit = customerService.GetCredit(SolventCustomer);
+				bool? approved = null;
+
+				orderService.OrderChekouted += (sender, args) => approved = args.Customer == SolventCustomer && args.Result;
 				orderService.CreateOrder(SolventCustomer, 100m);
 
 				while (eventSourcingService.ProcessingEvents > 0)
 					Thread.Sleep(0);
 
-				Assert.True(orderService.IsApproved(SolventCustomer));
+				Assert.True(approved);
 				Assert.Equal(customerCredit - 100m, customerService.GetCredit(SolventCustomer));
+			}
+		}
+
+		[Fact]
+		public void TryOrderNotApprovedSuccessfully()
+		{
+			using (var eventSourcingService = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			{
+				var orderService = new OrderService(eventSourcingService);
+				var customerService = new CustomerService(eventSourcingService);
+				var customerCredit = customerService.GetCredit(InsolventCustomer);
+				bool? approved = null;
+
+				orderService.OrderChekouted += (sender, args) => approved = args.Customer == InsolventCustomer && args.Result;
+				orderService.CreateOrder(InsolventCustomer, 100m);
+
+				while (eventSourcingService.ProcessingEvents > 0)
+					Thread.Sleep(0);
+
+				Assert.False(approved);
+				Assert.True(customerCredit < 100m);
+				Assert.Equal(customerCredit, customerService.GetCredit(InsolventCustomer));
 			}
 		}
 
 		class OrderService
 		{
+			public event EventHandler<OrderCheckoutedEventArgs> OrderChekouted;
+
 			readonly Dictionary<string, decimal> _orders = new Dictionary<string, decimal>();
-			readonly Dictionary<string, bool> _approvedOrders = new Dictionary<string, bool>();
 			readonly EventSourcingService _eventSourcingService;
 
 			public OrderService(EventSourcingService eventSourcingService)
 			{
 				_eventSourcingService = eventSourcingService;
-				_eventSourcingService.SubscribeEvent(CreditReserved, CreditReservedEventArgs.Empty);
+				_eventSourcingService.SubscribeEvent(CustomerCreditRervationResult, CreditReservedEventArgs.Empty);
+				_eventSourcingService.SubscribeEvent(CustomerCreditRervationResult, CreditLimitExceededEventArgs.Empty);
 			}
 
 			public void CreateOrder(string customer, decimal import)
@@ -49,15 +77,16 @@ namespace FxCommonStandard.Tests
 				_eventSourcingService.AddEvent(new OrderCreatedEventArgs(customer, import));
 			}
 
-			public bool IsApproved(string customer) { return _approvedOrders.TryGetValue(customer, out bool value) && value; }
-
-			void CreditReserved(object sender, EventArgs e)
+			void CustomerCreditRervationResult(object sender, EventArgs e)
 			{
-				if (!(e is CreditReservedEventArgs creditReserved))
-					return;
+				if (e is CreditReservedEventArgs creditReserved)
+					OnOrderChekouted(new OrderCheckoutedEventArgs(creditReserved.Customer, true));
 
-				_approvedOrders[creditReserved.Customer] = true;
+				if (e is CreditLimitExceededEventArgs creditLimitExceeded)
+					OnOrderChekouted(new OrderCheckoutedEventArgs(creditLimitExceeded.Customer, false));
 			}
+
+			void OnOrderChekouted(OrderCheckoutedEventArgs e) { OrderChekouted?.Invoke(this, e); }
 		}
 
 		class CustomerService
@@ -70,6 +99,7 @@ namespace FxCommonStandard.Tests
 				_eventSourcingService = eventSourcingService;
 				_eventSourcingService.SubscribeEvent(OrderCreated, OrderCreatedEventArgs.Empty);
 				_customers.Add(SolventCustomer, 1000m);
+				_customers.Add(InsolventCustomer, 50m);
 			}
 
 			public decimal GetCredit(string customer) { return _customers.TryGetValue(customer, out var credit) ? credit : 0m; }
@@ -90,6 +120,18 @@ namespace FxCommonStandard.Tests
 						_eventSourcingService.AddEvent(new CreditLimitExceededEventArgs(orderCreated.Customer));
 				}
 			}
+		}
+
+		class OrderCheckoutedEventArgs : EventArgs
+		{
+			public OrderCheckoutedEventArgs(string customer, bool result)
+			{
+				Customer = customer;
+				Result = result;
+			}
+
+			public string Customer { get; }
+			public bool Result { get; }
 		}
 
 		class OrderCreatedEventArgs : EventArgs
