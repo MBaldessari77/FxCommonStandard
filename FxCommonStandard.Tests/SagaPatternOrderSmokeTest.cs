@@ -10,25 +10,31 @@ namespace FxCommonStandard.Tests
 {
 	public class SagaPatternOrderSmokeTest
 	{
+		const string SolventCustomer = "SolventCustomer";
+
 		[Fact]
 		public void TryOrderApprovedSuccessfullySaga()
 		{
-			var eventSourcingService = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object);
-			var orderService = new OrderService(eventSourcingService);
-			var customerService = new CustomerService(eventSourcingService);
+			using (var eventSourcingService = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			{
+				var orderService = new OrderService(eventSourcingService);
+				var customerService = new CustomerService(eventSourcingService);
 
-			orderService.CreateOrder("SolventCustomer", 100m);
+				var customerCredit = customerService.GetCredit(SolventCustomer);
+				orderService.CreateOrder(SolventCustomer, 100m);
 
-			while (eventSourcingService.ProcessingEvents > 0)
-				Thread.Sleep(0);
+				while (eventSourcingService.ProcessingEvents > 0)
+					Thread.Sleep(0);
 
-			Assert.True(orderService.IsApproved("SolventCustomer"));
+				Assert.True(orderService.IsApproved(SolventCustomer));
+				Assert.Equal(customerCredit - 100m, customerService.GetCredit(SolventCustomer));
+			}
 		}
 
 		class OrderService
 		{
 			readonly Dictionary<string, decimal> _orders = new Dictionary<string, decimal>();
-			readonly Dictionary<string, bool> _ordersApproved = new Dictionary<string, bool>();
+			readonly Dictionary<string, bool> _approvedOrders = new Dictionary<string, bool>();
 			readonly EventSourcingService _eventSourcingService;
 
 			public OrderService(EventSourcingService eventSourcingService)
@@ -43,22 +49,47 @@ namespace FxCommonStandard.Tests
 				_eventSourcingService.AddEvent(new OrderCreatedEventArgs(customer, import));
 			}
 
-			public bool IsApproved(string customer) { return _ordersApproved.TryGetValue(customer, out bool value) && value; }
+			public bool IsApproved(string customer) { return _approvedOrders.TryGetValue(customer, out bool value) && value; }
 
-			void CreditReserved(object sender, EventArgs e) { throw new NotImplementedException(); }
+			void CreditReserved(object sender, EventArgs e)
+			{
+				if (!(e is CreditReservedEventArgs creditReserved))
+					return;
+
+				_approvedOrders[creditReserved.Customer] = true;
+			}
 		}
 
 		class CustomerService
 		{
+			readonly Dictionary<string, decimal> _customers = new Dictionary<string, decimal>();
 			readonly EventSourcingService _eventSourcingService;
 
 			public CustomerService(EventSourcingService eventSourcingService)
 			{
 				_eventSourcingService = eventSourcingService;
 				_eventSourcingService.SubscribeEvent(OrderCreated, OrderCreatedEventArgs.Empty);
+				_customers.Add(SolventCustomer, 1000m);
 			}
 
-			void OrderCreated(object sender, EventArgs e) { throw new NotImplementedException(); }
+			public decimal GetCredit(string customer) { return _customers.TryGetValue(customer, out var credit) ? credit : 0m; }
+
+			void OrderCreated(object sender, EventArgs e)
+			{
+				if (!(e is OrderCreatedEventArgs orderCreated))
+					return;
+
+				if (_customers.TryGetValue(orderCreated.Customer, out var credit))
+				{
+					if (credit >= orderCreated.Import)
+					{
+						_customers[orderCreated.Customer] = credit - orderCreated.Import;
+						_eventSourcingService.AddEvent(new CreditReservedEventArgs(orderCreated.Customer));
+					}
+					else
+						_eventSourcingService.AddEvent(new CreditLimitExceededEventArgs(orderCreated.Customer));
+				}
+			}
 		}
 
 		class OrderCreatedEventArgs : EventArgs
@@ -76,61 +107,34 @@ namespace FxCommonStandard.Tests
 			public string Customer { get; }
 			public decimal Import { get; }
 
-			public override bool Equals(object obj)
-			{
-				if (ReferenceEquals(null, obj)) return false;
-				if (ReferenceEquals(this, obj)) return true;
-				if (obj.GetType() != this.GetType()) return false;
-				return Equals((OrderCreatedEventArgs) obj);
-			}
-
-			public override int GetHashCode()
-			{
-				unchecked
-				{
-					return ((Customer != null ? Customer.GetHashCode() : 0) * 397) ^ Import.GetHashCode();
-				}
-			}
-
-			protected bool Equals(OrderCreatedEventArgs other)
-			{
-				return other.GetType()==GetType();;
-			}
+			public override bool Equals(object obj) { return obj.GetType() == GetType(); }
+			public override int GetHashCode() { return GetType().FullName.GetHashCode(); }
 		}
 
 		class CreditReservedEventArgs : EventArgs
 		{
 			public new static readonly CreditReservedEventArgs Empty = new CreditReservedEventArgs();
 
-			protected bool Equals(CreditReservedEventArgs other) { return other.GetType()==GetType(); }
+			CreditReservedEventArgs() { }
+			public CreditReservedEventArgs(string customer) { Customer = customer; }
 
-			public override bool Equals(object obj)
-			{
-				if (ReferenceEquals(null, obj)) return false;
-				if (ReferenceEquals(this, obj)) return true;
-				if (obj.GetType() != GetType()) return false;
-				return Equals((CreditReservedEventArgs) obj);
-			}
+			public string Customer { get; }
 
-			public override int GetHashCode() { return 0; }
+			public override bool Equals(object obj) { return obj.GetType() == GetType(); }
+			public override int GetHashCode() { return GetType().FullName.GetHashCode(); }
 		}
 
 		class CreditLimitExceededEventArgs : EventArgs
 		{
 			public new static readonly CreditLimitExceededEventArgs Empty = new CreditLimitExceededEventArgs();
 
-			protected bool Equals(CreditLimitExceededEventArgs other) { return other.GetType()==GetType(); }
+			CreditLimitExceededEventArgs() { }
+			public CreditLimitExceededEventArgs(string customer) { Customer = customer; }
 
-			public override bool Equals(object obj)
-			{
-				if (ReferenceEquals(null, obj)) return false;
-				if (ReferenceEquals(this, obj)) return true;
-				if (obj.GetType() != GetType()) return false;
-				return Equals((CreditLimitExceededEventArgs) obj);
-			}
+			public string Customer { get; }
 
-			public override int GetHashCode() { return 0; }
-
+			public override bool Equals(object obj) { return obj.GetType() == GetType(); }
+			public override int GetHashCode() { return GetType().FullName.GetHashCode(); }
 		}
 	}
 }
