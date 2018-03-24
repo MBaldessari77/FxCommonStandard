@@ -61,7 +61,7 @@ namespace FxCommonStandard.Services
 							{
 								try
 								{
-									tuple.Item1(this, tuple.Item2);
+									tuple.Item1(this, e);
 								}
 								finally
 								{

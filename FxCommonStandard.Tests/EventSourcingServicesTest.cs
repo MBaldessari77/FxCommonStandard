@@ -143,6 +143,24 @@ namespace FxCommonStandard.Tests
 			}
 		}
 
+		[Fact]
+		public void TheEventRaisedToSusbscriberIsExactlyTheSameAddedToEventSourcing()
+		{
+			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			{
+				var @event=new CustomEventArgs();
+				EventArgs receivedEvent = null;
+
+				service.SubscribeEvent((sender, args) => { receivedEvent = args; }, new CustomEventArgs());
+
+				service.AddEvent(@event);
+
+				WaitSpinLock(service);
+
+				Assert.Same(receivedEvent, @event);
+			}
+		}
+
 		void WaitSpinLock(EventSourcingService service, int remainingProcessingEvents = 0)
 		{
 			while (service.ProcessingEvents > remainingProcessingEvents)
@@ -151,7 +169,7 @@ namespace FxCommonStandard.Tests
 
 		class CustomEventArgs : EventArgs
 		{
-			public override bool Equals(object obj) { return obj != null && obj.GetType().IsAssignableFrom(GetType()); }
+			public override bool Equals(object obj) { return obj.GetType()==GetType(); }
 			public override int GetHashCode() { return GetType().FullName.GetHashCode(); }
 		}
 	}
