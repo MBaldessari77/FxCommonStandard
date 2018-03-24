@@ -128,7 +128,19 @@ namespace FxCommonStandard.Tests
 
 			unitOfWork.Verify(u => u.New(e));
 			unitOfWork.Verify(u => u.Commit());
+		}
 
+		[Fact]
+		public void IfAnEventSubscriberThrowAnExceptionTheEventMustBeUpdateTheProcessingQueueRequest()
+		{
+			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			{
+				service.SubscribeEvent((sender, args) => throw new NotImplementedException());
+
+				service.AddEvent();
+
+				WaitSpinLock(service);
+			}
 		}
 
 		void WaitSpinLock(EventSourcingService service, int remainingProcessingEvents = 0)
