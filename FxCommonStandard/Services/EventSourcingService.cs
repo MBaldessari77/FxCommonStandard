@@ -7,7 +7,7 @@ using FxCommonStandard.Contracts;
 
 namespace FxCommonStandard.Services
 {
-	public class EventSourcingService : IDisposable
+	public sealed class EventSourcingService : IDisposable
 	{
 		readonly IUnitOfWork<EventArgs> _unitOfWork;
 		readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
@@ -15,7 +15,7 @@ namespace FxCommonStandard.Services
 		readonly ConcurrentBag<EventSubscription> _eventMapping = new ConcurrentBag<EventSubscription>();
 
 		long _processingEvent;
-		bool _disposed;
+		bool _disposing;
 
 		public EventSourcingService(IUnitOfWork<EventArgs> unitOfWork)
 		{
@@ -25,8 +25,8 @@ namespace FxCommonStandard.Services
 
 		public void Dispose()
 		{
-			_event.Set();
-			_disposed = true;
+			_disposing = true;
+			_event.Dispose();
 		}
 
 		public void SubscribeEvent(EventHandler @delegate, EventArgs expected = null) { _eventMapping.Add(new EventSubscription { EventHandler = @delegate, EventArgs = expected }); }
@@ -56,11 +56,11 @@ namespace FxCommonStandard.Services
 
 		public Task WaitEventsProcessedAsync(int timeoutMilliseconds = -1) { return Task.Run(() => { WaitEventsProcessed(timeoutMilliseconds); }); }
 
-		long ProcessingEvents => Interlocked.Read(ref _processingEvent)
-		;
+		long ProcessingEvents => Interlocked.Read(ref _processingEvent);
+
 		void EventSourcingWorker()
 		{
-			while (!_disposed)
+			while (!_disposing)
 			{
 				if (_eventQueue.TryDequeue(out var e))
 				{
