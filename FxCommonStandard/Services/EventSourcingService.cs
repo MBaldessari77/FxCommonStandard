@@ -9,7 +9,7 @@ namespace FxCommonStandard.Services
 {
 	public sealed class EventSourcingService : IDisposable
 	{
-		readonly IUnitOfWork<EventArgs> _unitOfWork;
+		readonly IUnitOfWorkFactory<EventArgs> _unitOfWorkFactory;
 		readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
 		readonly ConcurrentQueue<EventArgs> _eventQueue = new ConcurrentQueue<EventArgs>();
 		readonly ConcurrentBag<EventSubscription> _eventMapping = new ConcurrentBag<EventSubscription>();
@@ -17,9 +17,9 @@ namespace FxCommonStandard.Services
 		long _processingEvent;
 		bool _disposing;
 
-		public EventSourcingService(IUnitOfWork<EventArgs> unitOfWork)
+		public EventSourcingService(IUnitOfWorkFactory<EventArgs> unitOfWorkFactory)
 		{
-			_unitOfWork = unitOfWork;
+			_unitOfWorkFactory = unitOfWorkFactory;
 			new Thread(EventSourcingWorker).Start();
 		}
 
@@ -38,10 +38,13 @@ namespace FxCommonStandard.Services
 				if (Equals(subscription.EventArgs, e))
 					Interlocked.Increment(ref _processingEvent);
 
-			_eventQueue.Enqueue(e);
+			using (var unitOfWork = _unitOfWorkFactory.New())
+			{
+				unitOfWork.New(e ?? new EventArgs());
+				unitOfWork.Commit();
+			}
 
-			_unitOfWork.New(e ?? new EventArgs());
-			_unitOfWork.Commit();
+			_eventQueue.Enqueue(e);
 
 			_event.Set();
 		}

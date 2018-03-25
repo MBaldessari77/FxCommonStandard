@@ -10,12 +10,21 @@ namespace FxCommonStandard.Tests.Services
 {
 	public class EventSourcingServicesTest
 	{
+		readonly IUnitOfWorkFactory<EventArgs> _unitOfWorkFactoryMock;
+
+		public EventSourcingServicesTest()
+		{
+			var mock = new Mock<IUnitOfWorkFactory<EventArgs>>();
+			mock.Setup(f => f.New()).Returns(() => new Mock<IUnitOfWork<EventArgs>>().Object);
+			_unitOfWorkFactoryMock = mock.Object;
+		}
+
 		[Fact]
 		public void WhenAnEventIsRaisedTheListenerReceiveTheEvent()
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var service = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
 
@@ -32,7 +41,7 @@ namespace FxCommonStandard.Tests.Services
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var service = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount++; }, new CustomEventArgs());
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
@@ -51,7 +60,7 @@ namespace FxCommonStandard.Tests.Services
 			int raisedCount1 = 0;
 			int raisedCount2 = 0;
 
-			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var service = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				service.SubscribeEvent((sender, args) => { raisedCount1++; });
 				service.SubscribeEvent((sender, args) => { raisedCount2++; });
@@ -69,7 +78,7 @@ namespace FxCommonStandard.Tests.Services
 		public void AStallOnAListenerOnEventCantBlockOtherListener()
 		{
 			int raisedCount = 0;
-			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var service = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				service.SubscribeEvent((sender, args) => { Thread.Sleep(int.MaxValue); });
 				service.SubscribeEvent((sender, args) => { raisedCount++; });
@@ -88,7 +97,7 @@ namespace FxCommonStandard.Tests.Services
 			int raisedCount1 = 0;
 			int raisedCount2 = 0;
 
-			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var service = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				service.SubscribeEvent((sender, args) => ++raisedCount1);
 				service.SubscribeEvent((sender, args) => ++raisedCount2);
@@ -121,20 +130,25 @@ namespace FxCommonStandard.Tests.Services
 		[Fact]
 		public void AnAddedEventIsPersistedAsNewInAnUnitOfWork()
 		{
-			var unitOfWork = new Mock<IUnitOfWork<EventArgs>>();
+			var factoryMock = new Mock<IUnitOfWorkFactory<EventArgs>>();
+			var unitOfWorkMock = new Mock<IUnitOfWork<EventArgs>>();
+			factoryMock.Setup(f => f.New()).Returns(unitOfWorkMock.Object);
+
 			var e = new EventArgs();
 
-			using (var service = new EventSourcingService(unitOfWork.Object))
+			using (var service = new EventSourcingService(factoryMock.Object))
 				service.AddEvent(e);
 
-			unitOfWork.Verify(u => u.New(e));
-			unitOfWork.Verify(u => u.Commit());
+			factoryMock.Verify(f=>f.New());
+			unitOfWorkMock.Verify(u => u.New(e));
+			unitOfWorkMock.Verify(u => u.Commit());
+			unitOfWorkMock.Verify(u => u.Dispose());
 		}
 
 		[Fact]
 		public void IfAnEventSubscriberThrowAnExceptionTheEventMustBeUpdateTheProcessingQueueRequest()
 		{
-			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var service = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				service.SubscribeEvent((sender, args) => throw new NotImplementedException());
 
@@ -147,9 +161,9 @@ namespace FxCommonStandard.Tests.Services
 		[Fact]
 		public void TheEventRaisedToSusbscriberIsExactlyTheSameAddedToEventSourcing()
 		{
-			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var service = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
-				var @event=new CustomEventArgs();
+				var @event = new CustomEventArgs();
 				EventArgs receivedEvent = null;
 
 				service.SubscribeEvent((sender, args) => { receivedEvent = args; }, new CustomEventArgs());
@@ -167,7 +181,7 @@ namespace FxCommonStandard.Tests.Services
 		{
 			int raisedCount = 0;
 
-			using (var service = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var service = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				service.SubscribeEvent(async (sender, args) => await Task.FromResult(raisedCount++));
 
@@ -181,7 +195,7 @@ namespace FxCommonStandard.Tests.Services
 
 		class CustomEventArgs : EventArgs
 		{
-			public override bool Equals(object obj) { return obj.GetType()==GetType(); }
+			public override bool Equals(object obj) { return obj.GetType() == GetType(); }
 			public override int GetHashCode() { return GetType().FullName.GetHashCode(); }
 		}
 	}

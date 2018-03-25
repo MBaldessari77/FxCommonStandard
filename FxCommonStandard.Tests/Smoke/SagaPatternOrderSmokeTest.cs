@@ -12,10 +12,19 @@ namespace FxCommonStandard.Tests.Smoke
 		const string SolventCustomer = "SolventCustomer";
 		const string InsolventCustomer = "InsolventCustomer";
 
+		readonly IUnitOfWorkFactory<EventArgs> _unitOfWorkFactoryMock;
+
+		public SagaPatternOrderSmokeTest()
+		{
+			var mock = new Mock<IUnitOfWorkFactory<EventArgs>>();
+			mock.Setup(f => f.New()).Returns(() => new Mock<IUnitOfWork<EventArgs>>().Object);
+			_unitOfWorkFactoryMock = mock.Object;
+		}
+
 		[Fact]
 		public void TryOrderApprovedSuccessfully()
 		{
-			using (var eventSourcingService = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var eventSourcingService = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				var orderService = new OrderService(eventSourcingService);
 				var customerService = new CustomerService(eventSourcingService);
@@ -35,7 +44,7 @@ namespace FxCommonStandard.Tests.Smoke
 		[Fact]
 		public void TryOrderNotApprovedSuccessfully()
 		{
-			using (var eventSourcingService = new EventSourcingService(new Mock<IUnitOfWork<EventArgs>>().Object))
+			using (var eventSourcingService = new EventSourcingService(_unitOfWorkFactoryMock))
 			{
 				var orderService = new OrderService(eventSourcingService);
 				var customerService = new CustomerService(eventSourcingService);
