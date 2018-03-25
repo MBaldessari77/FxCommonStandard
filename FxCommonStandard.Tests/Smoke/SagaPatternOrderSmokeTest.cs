@@ -5,7 +5,7 @@ using FxCommonStandard.Services;
 using Moq;
 using Xunit;
 
-namespace FxCommonStandard.Tests
+namespace FxCommonStandard.Tests.Smoke
 {
 	public class SagaPatternOrderSmokeTest
 	{

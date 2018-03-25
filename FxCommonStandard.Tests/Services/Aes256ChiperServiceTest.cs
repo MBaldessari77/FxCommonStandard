@@ -3,9 +3,9 @@ using System.Linq;
 using FxCommonStandard.Services;
 using Xunit;
 
-namespace FxCommonStandard.Tests
+namespace FxCommonStandard.Tests.Services
 {
-	public class Aes256ChiperTest
+	public class Aes256ChiperServiceTest
 	{
 		[Fact]
 		public void EveryCryptographicResultsIsDifferentEvenInCaseOfSamePassawordAndValue()
@@ -15,10 +15,10 @@ namespace FxCommonStandard.Tests
 			Guid pwd1 = Guid.NewGuid(), pwd2 = Guid.NewGuid();
 			string[] values = {yes, yes, no, no, yes};
 
-			Aes256Chiper chiper = new Aes256Chiper();
+			Aes256ChiperService chiperService = new Aes256ChiperService();
 
-			string[] encriptedValues = values.Select(v => chiper.EncriptBase64(pwd1, pwd2, v)).ToArray();
-			string[] decriptedValues = encriptedValues.Select(v => chiper.DecriptBase64(pwd1, pwd2, v)).ToArray();
+			string[] encriptedValues = values.Select(v => chiperService.EncriptBase64(pwd1, pwd2, v)).ToArray();
+			string[] decriptedValues = encriptedValues.Select(v => chiperService.DecriptBase64(pwd1, pwd2, v)).ToArray();
 
 			Assert.Empty(encriptedValues.Intersect(values));
 			Assert.True(decriptedValues.SequenceEqual(values));
