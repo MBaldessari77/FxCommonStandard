@@ -163,7 +163,7 @@ namespace FxCommonStandard.Tests
 		}
 
 		[Fact]
-		public async Task WhenAnEventIsRaisedTheListenerReceiveTheEventAsync()
+		public async Task TheListenerCanBeAlsoAsync()
 		{
 			int raisedCount = 0;
 

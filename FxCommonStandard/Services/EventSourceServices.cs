@@ -29,8 +29,6 @@ namespace FxCommonStandard.Services
 			_disposed = true;
 		}
 
-		public long ProcessingEvents => Interlocked.Read(ref _processingEvent);
-
 		public void SubscribeEvent(EventHandler @delegate, EventArgs expected = null) { _eventMapping.Add(new EventSubscription { EventHandler = @delegate, EventArgs = expected }); }
 
 		public void AddEvent(EventArgs e = null)
@@ -48,7 +46,7 @@ namespace FxCommonStandard.Services
 			_event.Set();
 		}
 
-		public void WaitEventsProcessed(int timeoutMilliseconds=-1)
+		public void WaitEventsProcessed(int timeoutMilliseconds = -1)
 		{
 			var sw = new Stopwatch();
 			sw.Start();
@@ -56,17 +54,10 @@ namespace FxCommonStandard.Services
 				Thread.Sleep(0);
 		}
 
-		public Task WaitEventsProcessedAsync(int timeoutMilliseconds=-1)
-		{
-			return Task.Run(() =>
-			{
-				var sw = new Stopwatch();
-				sw.Start();
-				while (ProcessingEvents > 0 && timeoutMilliseconds < 0 || sw.ElapsedMilliseconds <= timeoutMilliseconds)
-					Thread.Sleep(0);
-			});
-		}
+		public Task WaitEventsProcessedAsync(int timeoutMilliseconds = -1) { return Task.Run(() => { WaitEventsProcessed(timeoutMilliseconds); }); }
 
+		long ProcessingEvents => Interlocked.Read(ref _processingEvent)
+		;
 		void EventSourcingWorker()
 		{
 			while (!_disposed)
