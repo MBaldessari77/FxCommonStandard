@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using FxCommonStandard.Contracts;
-using FxCommonStandard.Extensions;
 
 namespace FxCommonStandard.Services
 {
