@@ -1,7 +1,7 @@
 using FxCommonStandard.Extensions;
 using Xunit;
 
-namespace FxCommonStandard.Tests
+namespace FxCommonStandard.Tests.Services
 {
 	public class ExpressionExtensionsTest
 	{

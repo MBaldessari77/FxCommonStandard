@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using FxCommonStandard.Contracts;
+using FxCommonStandard.Extensions;
 
 namespace FxCommonStandard.Services
 {
@@ -34,7 +36,7 @@ namespace FxCommonStandard.Services
 				if (!_fileSystemService.DirectoryExists(path))
 					return null;
 
-				string firstsubdir = _fileSystemService.GetDirectories(path).FirstOrDefault();
+				string firstsubdir = _fileSystemService.GetDirectories(path).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).FirstOrDefault();
 				if (firstsubdir != null)
 					return firstsubdir;
 			}
@@ -44,12 +46,17 @@ namespace FxCommonStandard.Services
 				parentdir = parentdir.EndsWith($"{Path.DirectorySeparatorChar}") ? parentdir : parentdir + Path.DirectorySeparatorChar;
 				if (isNetworkPath && !_fileSystemService.DirectoryExists(parentdir))
 					return null;
-				IEnumerable<string> subdirs = _fileSystemService.GetDirectories(parentdir).ToArray();
-				string nextdir = subdirs.SkipWhile(p => !path.Equals(p, StringComparison.InvariantCultureIgnoreCase)).Skip(1).FirstOrDefault();
-				if (nextdir != null)
-					return nextdir;
-				if (subdirs.Any())
-					return subdirs.First();
+				string[] subdirs = _fileSystemService.GetDirectories(parentdir).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).ToArray();
+				for (var index = 0; index < subdirs.Length; index++)
+				{
+					string subdir = subdirs[index];
+					if (subdir.Equals(path, StringComparison.InvariantCultureIgnoreCase))
+						return index < subdirs.Length - 1 ? subdirs[index + 1] : subdirs[0];
+					if (subdir.StartsWith(path, StringComparison.InvariantCultureIgnoreCase))
+						return subdir;
+				}
+				if (subdirs.Length > 0)
+					return subdirs[0];
 			}
 
 			return _fileSystemService.DirectoryExists(path) ? path : null;

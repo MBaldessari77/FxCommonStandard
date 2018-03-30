@@ -12,7 +12,7 @@ namespace FxCommonStandard.Services
 	/// </remarks>
 	/// <see ref="https://msdn.microsoft.com/en-US/library/system.security.cryptography.aescryptoserviceprovider(v=vs.90).aspx"/>
 	/// <see ref="http://stackoverflow.com/questions/8041451/good-aes-initialization-vector-practice"/>
-	public class Aes256Chiper
+	public class Aes256ChiperService
 	{
 		const int KeyLength = 256 / 8;  //32 byte
 

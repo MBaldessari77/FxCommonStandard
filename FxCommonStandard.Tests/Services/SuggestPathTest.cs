@@ -6,7 +6,7 @@ using FxCommonStandard.Services;
 using Moq;
 using Xunit;
 
-namespace FxCommonStandard.Tests
+namespace FxCommonStandard.Tests.Services
 {
 	public class SuggestPathTest
 	{
@@ -140,13 +140,19 @@ namespace FxCommonStandard.Tests
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}some", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}otherdir", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedir", $"c:{Path.DirectorySeparatorChar}otherdir", $"c:{Path.DirectorySeparatorChar}some" });
 
 			var service = new PathService(fileSystemService.Object);
 
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}some"));
-			Assert.Equal($"c:{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}somedir"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}some"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}some", service.SuggestPath($"c:{Path.DirectorySeparatorChar}otherdir"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"C:{Path.DirectorySeparatorChar}SOME"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($"C:{Path.DirectorySeparatorChar}SOMEDIR"));
@@ -157,6 +163,8 @@ namespace FxCommonStandard.Tests
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($" C:{Path.DirectorySeparatorChar}SOME "));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($" C:{Path.DirectorySeparatorChar}SOMEDIR "));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}some", service.SuggestPath($" C:{Path.DirectorySeparatorChar}OTHERDIR "));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}some", service.SuggestPath($" C:{Path.DirectorySeparatorChar}s"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($" C:{Path.DirectorySeparatorChar}o"));
 		}
 
 		[Fact]
