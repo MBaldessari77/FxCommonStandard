@@ -25,11 +25,14 @@ namespace FxCommonStandard.Services
 			path = path.Trim();
 
 			string parentdir = Path.GetDirectoryName(path);
+#if DEBUG
+			Console.WriteLine($"path = {path}; parentdir = {parentdir}");
+#endif
 			if (parentdir == null || !_fileSystemService.DirectoryExists(parentdir))
 				return null;
 
 			string[] subdirs = _fileSystemService.GetDirectories(parentdir).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).ToArray();
-			
+
 			for (var index = 0; index < subdirs.Length; index++)
 			{
 				string subdir = subdirs[index];

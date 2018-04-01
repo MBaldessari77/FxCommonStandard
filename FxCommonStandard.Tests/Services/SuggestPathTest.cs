@@ -43,7 +43,7 @@ namespace FxCommonStandard.Tests.Services
 			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
-
+			 
 			var service = new PathService(fileSystemService.Object);
 
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}somedir"));
