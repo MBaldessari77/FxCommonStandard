@@ -38,6 +38,9 @@ namespace FxCommonStandard.Tests.Services
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
@@ -101,6 +104,9 @@ namespace FxCommonStandard.Tests.Services
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
@@ -122,6 +128,9 @@ namespace FxCommonStandard.Tests.Services
 		public void WhenPathIsPassedWithNoEndingBackslashAndExistsIsReturnedNextPath()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
 			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
@@ -151,6 +160,9 @@ namespace FxCommonStandard.Tests.Services
 		public void WhenPathIsPassedWithNoEndingBackslashIsSearchedNextDirectoryThatStartsWithLastToken()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
 			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
