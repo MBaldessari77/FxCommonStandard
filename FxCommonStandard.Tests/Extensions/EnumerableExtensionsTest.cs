@@ -4,7 +4,7 @@ using System.Linq;
 using FxCommonStandard.Extensions;
 using Xunit;
 
-namespace FxCommonStandard.Tests.Services
+namespace FxCommonStandard.Tests.Extensions
 {
 	public class EnumerableExtensionsTest
 	{

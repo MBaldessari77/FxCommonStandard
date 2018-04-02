@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FxCommonStandard.Tests.Services
 {
-	public class SuggestPathTest
+	public class SuggestPathServiceTest
 	{
 		[Fact]
 		public void WhenNoPathPassedTheResultIsNull()
