@@ -113,6 +113,9 @@ namespace FxCommonStandard.Tests.Services
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedira", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedira" });
+			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedira" });
 
@@ -140,6 +143,9 @@ namespace FxCommonStandard.Tests.Services
 			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedirb", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
+			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedira", $"c:{Path.DirectorySeparatorChar}somedirb" });
 			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedira", $"c:{Path.DirectorySeparatorChar}somedirb" });
@@ -175,6 +181,14 @@ namespace FxCommonStandard.Tests.Services
 			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}otherdir", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
+			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(new[]
+				{
+					$"c:{Path.DirectorySeparatorChar}somedir",
+					$"c:{Path.DirectorySeparatorChar}otherdir",
+					$"c:{Path.DirectorySeparatorChar}some"
+				});
 			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[]
