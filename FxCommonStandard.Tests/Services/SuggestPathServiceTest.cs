@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FxCommonStandard.Tests.Services
 {
-	public class SuggestPathTest
+	public class SuggestPathServiceTest
 	{
 		[Fact]
 		public void WhenNoPathPassedTheResultIsNull()
@@ -38,6 +38,12 @@ namespace FxCommonStandard.Tests.Services
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 
@@ -57,7 +63,10 @@ namespace FxCommonStandard.Tests.Services
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(Enumerable.Empty<string>());
 
 			var service = new PathService(fileSystemService.Object);
@@ -76,7 +85,10 @@ namespace FxCommonStandard.Tests.Services
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
-				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedir{Path.DirectorySeparatorChar}subdira" });
 
 			var service = new PathService(fileSystemService.Object);
@@ -92,8 +104,17 @@ namespace FxCommonStandard.Tests.Services
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedira", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
+			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedira" });
 			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedira" });
@@ -111,11 +132,20 @@ namespace FxCommonStandard.Tests.Services
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedira", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedirb", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
+			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedira", $"c:{Path.DirectorySeparatorChar}somedirb" });
 			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedira", $"c:{Path.DirectorySeparatorChar}somedirb" });
@@ -137,6 +167,12 @@ namespace FxCommonStandard.Tests.Services
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}some", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
@@ -146,12 +182,24 @@ namespace FxCommonStandard.Tests.Services
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}otherdir", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(new[]
+				{
+					$"c:{Path.DirectorySeparatorChar}somedir",
+					$"c:{Path.DirectorySeparatorChar}otherdir",
+					$"c:{Path.DirectorySeparatorChar}some"
+				});
+			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
-				.Returns(new[] { $"c:{Path.DirectorySeparatorChar}somedir", $"c:{Path.DirectorySeparatorChar}otherdir", $"c:{Path.DirectorySeparatorChar}some" });
+				.Returns(new[]
+				{
+					$"c:{Path.DirectorySeparatorChar}somedir",
+					$"c:{Path.DirectorySeparatorChar}otherdir",
+					$"c:{Path.DirectorySeparatorChar}some"
+				});
 
 			var service = new PathService(fileSystemService.Object);
 
-			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}some"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}some"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}some", service.SuggestPath($"c:{Path.DirectorySeparatorChar}otherdir"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"C:{Path.DirectorySeparatorChar}SOME"));
@@ -165,10 +213,54 @@ namespace FxCommonStandard.Tests.Services
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}some", service.SuggestPath($" C:{Path.DirectorySeparatorChar}OTHERDIR "));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}some", service.SuggestPath($" C:{Path.DirectorySeparatorChar}s"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($" C:{Path.DirectorySeparatorChar}o"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($" C:{Path.DirectorySeparatorChar}somedir"));
 		}
 
 		[Fact]
-		public void WhenPathIsAnIncompletedNetworkPathIsReturnedSamePath()
+		public void WhenPathIsPassedWithNoEndingBackslashIsSearchedNextDirectoryThatStartsWithLastTokenAlsoInCaseOfSubdir()
+		{
+			var fileSystemService = new Mock<IFileSystemService>();
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}subdir", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(true);
+			fileSystemService
+				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}subdir", StringComparison.InvariantCultureIgnoreCase))))
+				.Returns(new[]
+				{
+					$"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir",
+					$"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir",
+					$"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some"
+				});
+
+			var service = new PathService(fileSystemService.Object);
+
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}SOME"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}SOMEDIR"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}OTHERDIR"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some "));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir "));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir "));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}SOME "));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}SOMEDIR "));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}OTHERDIR "));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}s"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}o"));
+			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($" c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir"));
+		}
+
+		[Fact]
+		public void WhenPathIsAnIncompletedNetworkPathIsReturnedNull()
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
@@ -181,6 +273,9 @@ namespace FxCommonStandard.Tests.Services
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath{Path.DirectorySeparatorChar}share", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
+				.Setup(d => d.DirectoryExists(null))
+				.Returns(false);
+			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath", StringComparison.InvariantCultureIgnoreCase))))
 				.Throws<ArgumentException>();
 			fileSystemService
@@ -189,9 +284,9 @@ namespace FxCommonStandard.Tests.Services
 
 			var service = new PathService(fileSystemService.Object);
 
-			Assert.Equal($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath", service.SuggestPath($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath"));
-			Assert.Equal($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath{Path.DirectorySeparatorChar}", service.SuggestPath($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath{Path.DirectorySeparatorChar}"));
-			Assert.Equal($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath{Path.DirectorySeparatorChar}share", service.SuggestPath($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath{Path.DirectorySeparatorChar}share"));
+			Assert.Null(service.SuggestPath($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath"));
+			Assert.Null(service.SuggestPath($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath{Path.DirectorySeparatorChar}"));
+			Assert.Null(service.SuggestPath($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath{Path.DirectorySeparatorChar}share"));
 		}
 
 		[Fact]

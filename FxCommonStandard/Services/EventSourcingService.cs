@@ -33,16 +33,16 @@ namespace FxCommonStandard.Services
 
 		public void AddEvent(EventArgs e = null)
 		{
-			//Update event per delegate count
-			foreach (EventSubscription subscription in _eventMapping)
-				if (Equals(subscription.EventArgs, e))
-					Interlocked.Increment(ref _processingEvent);
-
 			using (var unitOfWork = _unitOfWorkFactory.New())
 			{
 				unitOfWork.New(e ?? new EventArgs());
 				unitOfWork.Commit();
 			}
+
+			//Update event per delegate count
+			foreach (EventSubscription subscription in _eventMapping)
+				if (Equals(subscription.EventArgs, e))
+					Interlocked.Increment(ref _processingEvent);
 
 			_eventQueue.Enqueue(e);
 

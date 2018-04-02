@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using FxCommonStandard.Contracts;
-using FxCommonStandard.Extensions;
 
 namespace FxCommonStandard.Services
 {
@@ -16,48 +13,41 @@ namespace FxCommonStandard.Services
 
 		public string SuggestPath(string path)
 		{
-			if (string.IsNullOrEmpty(path) || path.Trim() == string.Empty)
-				return null;
-
-			if (Path.GetInvalidPathChars().Intersect(path).Any())
-				return null;
-
-			if (Path.GetDirectoryName(path) == string.Empty)
+			if (string.IsNullOrWhiteSpace(path))
 				return null;
 
 			path = path.Trim();
 
-			var isNetworkPath = path.StartsWith($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}");
-			if (isNetworkPath && path.Substring(2).Count(c => c == Path.DirectorySeparatorChar) <= 1)
-				return _fileSystemService.DirectoryExists(path) ? path : null;
+			if (Path.GetInvalidPathChars().Intersect(path).Any())
+				return null;
 
-			if (path.EndsWith($@"{Path.DirectorySeparatorChar}"))
-			{
-				if (!_fileSystemService.DirectoryExists(path))
-					return null;
+			string parentdir = Path.GetDirectoryName(path);
 
-				string firstsubdir = _fileSystemService.GetDirectories(path).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).FirstOrDefault();
-				if (firstsubdir != null)
-					return firstsubdir;
-			}
-			else
+#if DEBUG
+			Console.WriteLine($"path = {path}; parentdir = {parentdir}");
+#endif
+
+			if (!_fileSystemService.DirectoryExists(parentdir))
+				return null;
+
+			string[] subdirs = _fileSystemService.GetDirectories(parentdir).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).ToArray();
+
+#if DEBUG
+			for (int index = 0; index < subdirs.Length; index++)
+				Console.WriteLine($"subdirs[{index}] = {subdirs[index]}");
+#endif
+
+			for (var index = 0; index < subdirs.Length; index++)
 			{
-				string parentdir = Directory.GetParent(path).Name;
-				parentdir = parentdir.EndsWith($"{Path.DirectorySeparatorChar}") ? parentdir : parentdir + Path.DirectorySeparatorChar;
-				if (isNetworkPath && !_fileSystemService.DirectoryExists(parentdir))
-					return null;
-				string[] subdirs = _fileSystemService.GetDirectories(parentdir).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).ToArray();
-				for (var index = 0; index < subdirs.Length; index++)
-				{
-					string subdir = subdirs[index];
-					if (subdir.Equals(path, StringComparison.InvariantCultureIgnoreCase))
-						return index < subdirs.Length - 1 ? subdirs[index + 1] : subdirs[0];
-					if (subdir.StartsWith(path, StringComparison.InvariantCultureIgnoreCase))
-						return subdir;
-				}
-				if (subdirs.Length > 0)
-					return subdirs[0];
+				string subdir = subdirs[index];
+				if (subdir.Equals(path, StringComparison.InvariantCultureIgnoreCase))
+					return index < subdirs.Length - 1 ? subdirs[index + 1] : subdirs[0];
+				if (subdir.StartsWith(path, StringComparison.InvariantCultureIgnoreCase))
+					return subdir;
 			}
+
+			if (subdirs.Length > 0)
+				return subdirs[0];
 
 			return _fileSystemService.DirectoryExists(path) ? path : null;
 		}

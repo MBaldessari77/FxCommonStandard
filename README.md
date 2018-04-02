@@ -11,3 +11,8 @@ FxCommonStandard using .NET Standard 2.0
 ### [v.1.0.1](https://github.com/waldrix/FxCommonStandard/releases/tag/1.0.1)
 
 * Fixed PathService tests for Unix based systems
+
+### [v.1.0.2](https://github.com/waldrix/FxCommonStandard/releases/tag/1.0.2)
+
+* Fixed some issues in PathService SuggestPath
+* Added a draft version of EventSourcing services
