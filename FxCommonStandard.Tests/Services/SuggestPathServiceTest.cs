@@ -46,7 +46,7 @@ namespace FxCommonStandard.Tests.Services
 			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}somedir", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
-			 
+
 			var service = new PathService(fileSystemService.Object);
 
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}somedir"));
@@ -104,7 +104,7 @@ namespace FxCommonStandard.Tests.Services
 		{
 			var fileSystemService = new Mock<IFileSystemService>();
 			fileSystemService
-				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:", StringComparison.InvariantCultureIgnoreCase))))
+				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals("c:", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"c:{Path.DirectorySeparatorChar}", StringComparison.InvariantCultureIgnoreCase))))
