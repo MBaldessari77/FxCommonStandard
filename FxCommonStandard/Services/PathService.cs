@@ -25,6 +25,7 @@ namespace FxCommonStandard.Services
 			path = path.Trim();
 
 			string parentdir = Path.GetDirectoryName(path);
+
 #if DEBUG
 			Console.WriteLine($"path = {path}; parentdir = {parentdir}");
 #endif
@@ -32,6 +33,13 @@ namespace FxCommonStandard.Services
 				return null;
 
 			string[] subdirs = _fileSystemService.GetDirectories(parentdir).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).ToArray();
+
+#if DEBUG
+			for (int index = 0; index < subdirs.Length; index++)
+			{
+				Console.WriteLine($"subdirs[{index}] = {subdirs[index]}");
+			}
+#endif
 
 			for (var index = 0; index < subdirs.Length; index++)
 			{

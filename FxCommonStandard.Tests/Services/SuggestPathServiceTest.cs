@@ -187,7 +187,6 @@ namespace FxCommonStandard.Tests.Services
 			var service = new PathService(fileSystemService.Object);
 
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}some"));
-			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}some"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}some", service.SuggestPath($"c:{Path.DirectorySeparatorChar}otherdir"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"C:{Path.DirectorySeparatorChar}SOME"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}otherdir", service.SuggestPath($"C:{Path.DirectorySeparatorChar}SOMEDIR"));
@@ -230,7 +229,6 @@ namespace FxCommonStandard.Tests.Services
 
 			var service = new PathService(fileSystemService.Object);
 
-			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}some", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}otherdir"));
 			Assert.Equal($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}somedir", service.SuggestPath($"c:{Path.DirectorySeparatorChar}subdir{Path.DirectorySeparatorChar}SOME"));
