@@ -273,6 +273,9 @@ namespace FxCommonStandard.Tests.Services
 				.Setup(d => d.DirectoryExists(It.Is<string>(s => s.Equals($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath{Path.DirectorySeparatorChar}share", StringComparison.InvariantCultureIgnoreCase))))
 				.Returns(true);
 			fileSystemService
+				.Setup(d => d.DirectoryExists(null))
+				.Returns(false);
+			fileSystemService
 				.Setup(d => d.GetDirectories(It.Is<string>(s => s.Equals($"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}networkpath", StringComparison.InvariantCultureIgnoreCase))))
 				.Throws<ArgumentException>();
 			fileSystemService

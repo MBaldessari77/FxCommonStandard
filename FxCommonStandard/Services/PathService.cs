@@ -13,32 +13,28 @@ namespace FxCommonStandard.Services
 
 		public string SuggestPath(string path)
 		{
-			if (string.IsNullOrEmpty(path) || path.Trim() == string.Empty)
-				return null;
-
-			if (Path.GetInvalidPathChars().Intersect(path).Any())
-				return null;
-
-			if (Path.GetDirectoryName(path) == string.Empty)
+			if (string.IsNullOrWhiteSpace(path))
 				return null;
 
 			path = path.Trim();
+
+			if (Path.GetInvalidPathChars().Intersect(path).Any())
+				return null;
 
 			string parentdir = Path.GetDirectoryName(path);
 
 #if DEBUG
 			Console.WriteLine($"path = {path}; parentdir = {parentdir}");
 #endif
-			if (parentdir == null || !_fileSystemService.DirectoryExists(parentdir))
+
+			if (!_fileSystemService.DirectoryExists(parentdir))
 				return null;
 
 			string[] subdirs = _fileSystemService.GetDirectories(parentdir).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).ToArray();
 
 #if DEBUG
 			for (int index = 0; index < subdirs.Length; index++)
-			{
 				Console.WriteLine($"subdirs[{index}] = {subdirs[index]}");
-			}
 #endif
 
 			for (var index = 0; index < subdirs.Length; index++)
