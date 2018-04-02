@@ -16,3 +16,8 @@ FxCommonStandard using .NET Standard 2.0
 
 * Fixed some issues in PathService SuggestPath
 * Added a draft version of EventSourcing services
+
+### [v.1.0.3](https://github.com/waldrix/FxCommonStandard/releases/tag/1.0.3)
+
+* Deep refactoring of PathService.GetPath utils method.
+* Fixed some code smells with SonarQube.
