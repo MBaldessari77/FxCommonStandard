@@ -26,16 +26,9 @@ namespace FxCommonStandard.Services
             if (!_fileSystemService.DirectoryExists(parentDir))
                 return null;
 
-            string[] subDirs = GetDirectories(parentDir);
+            string[] directories = GetDirectories(parentDir);
 
-            string subDir = MatchSubDir(path, subDirs);
-            if (subDir != null)
-                return subDir;
-
-            if (subDirs.Length > 0)
-                return subDirs[0];
-
-            return _fileSystemService.DirectoryExists(path) ? path : null;
+            return MatchDirectories(path, directories);
         }
 
         private string[] GetDirectories(string path)
@@ -52,7 +45,7 @@ namespace FxCommonStandard.Services
                 .Any();
         }
 
-        private static string MatchSubDir(string path, string[] subDirs)
+        private string MatchDirectories(string path, string[] subDirs)
         {
             for (var index = 0; index < subDirs.Length; index++)
             {
@@ -63,7 +56,10 @@ namespace FxCommonStandard.Services
                     return subDir;
             }
 
-            return null;
+            if (subDirs.Length > 0)
+                return subDirs[0];
+
+            return _fileSystemService.DirectoryExists(path) ? path : null;
         }
     }
 }
