@@ -5,51 +5,56 @@ using FxCommonStandard.Contracts;
 
 namespace FxCommonStandard.Services
 {
-	public class PathService
-	{
-		readonly IFileSystemService _fileSystemService;
+    public class PathService
+    {
+        private readonly IFileSystemService _fileSystemService;
 
-		public PathService(IFileSystemService fileSystemService) { _fileSystemService = fileSystemService; }
+        public PathService(IFileSystemService fileSystemService) { _fileSystemService = fileSystemService; }
 
-		public string SuggestPath(string path)
-		{
-			if (string.IsNullOrWhiteSpace(path))
-				return null;
+        public string SuggestPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return null;
 
-			path = path.Trim();
+            path = path.Trim();
 
-			if (Path.GetInvalidPathChars().Intersect(path).Any())
-				return null;
+            if (Path.GetInvalidPathChars()
+                .Intersect(path)
+                .Any())
+                return null;
 
-			string parentdir = Path.GetDirectoryName(path);
+            string parentDir = Path.GetDirectoryName(path);
 
-#if DEBUG
-			Console.WriteLine($"path = {path}; parentdir = {parentdir}");
-#endif
+            if (!_fileSystemService.DirectoryExists(parentDir))
+                return null;
 
-			if (!_fileSystemService.DirectoryExists(parentdir))
-				return null;
+            string[] subDirs = _fileSystemService.GetDirectories(parentDir)
+                .OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase)
+                .ToArray();
 
-			string[] subdirs = _fileSystemService.GetDirectories(parentdir).OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase).ToArray();
+            string subDir;
+            if ((subDir = MatchSubDir(path, subDirs)) != null)
+                return subDir;
 
-#if DEBUG
-			for (int index = 0; index < subdirs.Length; index++)
-				Console.WriteLine($"subdirs[{index}] = {subdirs[index]}");
-#endif
+            if (subDirs.Length > 0)
+                return subDirs[0];
 
-			for (var index = 0; index < subdirs.Length; index++)
-			{
-				string subdir = subdirs[index];
-				if (subdir.Equals(path, StringComparison.InvariantCultureIgnoreCase))
-					return index < subdirs.Length - 1 ? subdirs[index + 1] : subdirs[0];
-				if (subdir.StartsWith(path, StringComparison.InvariantCultureIgnoreCase))
-					return subdir;
-			}
+            return _fileSystemService.DirectoryExists(path) ? path : null;
+        }
 
-			if (subdirs.Length > 0)
-				return subdirs[0];
+        private static string MatchSubDir(string path, string[] subDirs)
+        {
 
-			return _fileSystemService.DirectoryExists(path) ? path : null;
-		}
-	}
+            for (var index = 0; index < subDirs.Length; index++)
+            {
+                string subDir = subDirs[index];
+                if (subDir.Equals(path, StringComparison.InvariantCultureIgnoreCase))
+                    return index < subDirs.Length - 1 ? subDirs[index + 1] : subDirs[0];
+                if (subDir.StartsWith(path, StringComparison.InvariantCultureIgnoreCase))
+                    return subDir;
+            }
+
+            return null;
+        }
+    }
 }
