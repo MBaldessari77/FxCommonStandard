@@ -18,9 +18,7 @@ namespace FxCommonStandard.Services
 
             path = path.Trim();
 
-            if (Path.GetInvalidPathChars()
-                .Intersect(path)
-                .Any())
+            if (ContainsInvalidPathChars(path))
                 return null;
 
             string parentDir = Path.GetDirectoryName(path);
@@ -28,12 +26,10 @@ namespace FxCommonStandard.Services
             if (!_fileSystemService.DirectoryExists(parentDir))
                 return null;
 
-            string[] subDirs = _fileSystemService.GetDirectories(parentDir)
-                .OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase)
-                .ToArray();
+            string[] subDirs = GetDirectories(parentDir);
 
-            string subDir;
-            if ((subDir = MatchSubDir(path, subDirs)) != null)
+            string subDir = MatchSubDir(path, subDirs);
+            if (subDir != null)
                 return subDir;
 
             if (subDirs.Length > 0)
@@ -42,9 +38,22 @@ namespace FxCommonStandard.Services
             return _fileSystemService.DirectoryExists(path) ? path : null;
         }
 
+        private string[] GetDirectories(string path)
+        {
+            return _fileSystemService.GetDirectories(path)
+                .OrderBy(d => d, StringComparer.InvariantCultureIgnoreCase)
+                .ToArray();
+        }
+
+        private static bool ContainsInvalidPathChars(string path)
+        {
+            return Path.GetInvalidPathChars()
+                .Intersect(path)
+                .Any();
+        }
+
         private static string MatchSubDir(string path, string[] subDirs)
         {
-
             for (var index = 0; index < subDirs.Length; index++)
             {
                 string subDir = subDirs[index];
